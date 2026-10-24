@@ -35,6 +35,37 @@ export async function sendTelegramPhoto({ token, chatId, photoUrl, caption, pars
     return { ok: false, error: 'Telegram credentials missing (token or chatId)' };
   }
 
+  // Support base64 data URI (uploaded from device)
+  if (photoUrl && photoUrl.startsWith('data:image/')) {
+    try {
+      const commaIdx = photoUrl.indexOf(',');
+      const mime = photoUrl.slice(5, photoUrl.indexOf(';')) || 'image/jpeg';
+      const base64Data = photoUrl.slice(commaIdx + 1);
+      const buffer = Buffer.from(base64Data, 'base64');
+      const blob = new Blob([buffer], { type: mime });
+
+      const form = new FormData();
+      form.append('chat_id', chatId);
+      form.append('photo', blob, 'receipt.jpg');
+      form.append('caption', caption.slice(0, 1024));
+      form.append('parse_mode', parseMode);
+
+      const res = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
+        method: 'POST',
+        body: form
+      });
+
+      const data = await res.json();
+      if (data.ok) {
+        return { ok: true, method: 'sendPhotoMultipart', result: data.result };
+      }
+      console.warn('sendPhoto multipart failed, falling back:', data.description);
+    } catch (err) {
+      console.warn('sendPhoto multipart network error:', err.message);
+    }
+  }
+
+  // Support regular HTTP/HTTPS URL
   if (photoUrl && (photoUrl.startsWith('http://') || photoUrl.startsWith('https://'))) {
     try {
       const res = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
@@ -187,6 +218,65 @@ Status: 🟡 <b>Ko'rib chiqish kutilmoqda</b>
 <i>Parol va maxfiy ma'lumotlar xavfsizlik maqsadida yuborilmaydi.</i>
 `.trim();
       return sendTelegramText({ token, chatId, text });
+    }
+
+    case 'new_order': {
+      const order = payload.order || {};
+      const items = order.items || [];
+      const itemsList = items.map((i, idx) => `  ${idx + 1}. <b>${i.name}</b> x${i.quantity} (${((i.price || 0) * (i.quantity || 1)).toLocaleString()} UZS)`).join('\n');
+      
+      // Mandatory photo: receipt photo or first product's photo
+      const photoUrl = order.receiptPhoto || (items[0] && items[0].image) || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop';
+      
+      const caption = `
+🛍️ <b>YANGI XARID / MAHSULOT BUYURTMASI (FOTO BILAN)!</b>
+━━━━━━━━━━━━━━━━━━━━
+🆔 <b>Buyurtma ID:</b> <code>#${order.id}</code>
+👤 <b>Xaridor:</b> <b>${order.customerName || 'Mijoz'}</b>
+📞 <b>Telefon:</b> <a href="tel:${order.customerPhone}">${order.customerPhone || '-'}</a>
+📍 <b>Manzil:</b> ${order.deliveryRegion || ''}, ${order.deliveryAddress || ''}
+🚚 <b>Yetkazish:</b> ${order.deliveryType === 'pickup' ? "Do'kondan olib ketish" : 'Kuryer orqali'}
+💳 <b>To'lov turi:</b> ${(order.paymentMethod || 'PAYME').toUpperCase()}
+━━━━━━━━━━━━━━━━━━━━
+📦 <b>Xarid qilingan tovarlar:</b>
+${itemsList || '1 dona tovar'}
+━━━━━━━━━━━━━━━━━━━━
+💰 <b>JAMI TO'LOV:</b> <b>${(order.total || 0).toLocaleString()} UZS</b>
+📸 <b>FOTO:</b> 🟢 <b>To'lov cheki / Tovar fotosurati biriktirilgan (Majburiy)</b>
+🕒 <b>Vaqt:</b> ${now}
+`.trim();
+
+      return sendTelegramPhoto({ token, chatId, photoUrl, caption });
+    }
+
+    case 'new_product': {
+      const prod = payload.product || {};
+      const photoUrl = prod.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop';
+      const caption = `
+🆕 <b>YANGI TOVAR RO'YXATGA OLINDI (FOTOSURAT BILAN)!</b>
+━━━━━━━━━━━━━━━━━━━━
+📦 <b>Nomi:</b> <b>${prod.name || '-'}</b>
+🏷️ <b>Toifa:</b> ${prod.category || '-'} • <b>Brend:</b> ${prod.brand || '-'}
+💰 <b>Narxi:</b> <b>${(prod.price || 0).toLocaleString()} UZS</b>
+📊 <b>Zaxira soni:</b> ${prod.stock || 0} dona
+📸 <b>Mahsulot fotosurati:</b> Biriktirilgan (Majburiy)
+🕒 <b>Vaqt:</b> ${now}
+`.trim();
+      return sendTelegramPhoto({ token, chatId, photoUrl, caption });
+    }
+
+    case 'low_stock': {
+      const prod = payload.product || {};
+      const photoUrl = prod.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop';
+      const caption = `
+⚠️ <b>KAM QOLDIQ OGOHLANTIRISHI!</b>
+━━━━━━━━━━━━━━━━━━━━
+📦 <b>Tovar:</b> <b>${prod.name || '-'}</b>
+📉 <b>Omborda qoldi:</b> <b>${prod.stock || 0} dona</b>
+💰 <b>Narxi:</b> ${(prod.price || 0).toLocaleString()} UZS
+🕒 <b>Vaqt:</b> ${now}
+`.trim();
+      return sendTelegramPhoto({ token, chatId, photoUrl, caption });
     }
 
     default:

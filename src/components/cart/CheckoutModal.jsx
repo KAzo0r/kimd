@@ -9,7 +9,11 @@ import {
   Send,
   Sparkles,
   ShoppingBag,
-  ArrowRight
+  ArrowRight,
+  Camera,
+  Upload,
+  AlertCircle,
+  Image as ImageIcon
 } from 'lucide-react';
 import { useCartStore } from '../../store/useCartStore';
 import { useOrderStore } from '../../store/useOrderStore';
@@ -38,9 +42,11 @@ export default function CheckoutModal({ isOpen, onClose }) {
     address: '',
     deliveryType: 'courier', // 'courier' | 'pickup'
     paymentMethod: 'payme', // 'payme' | 'click' | 'uzum' | 'cash' | 'card'
+    receiptPhoto: '', // MANDATORY PHOTO OF RECEIPT / PRODUCT
     notes: ''
   });
 
+  const [photoError, setPhotoError] = useState('');
   const [loading, setLoading] = useState(false);
   const [completedOrder, setCompletedOrder] = useState(null);
 
@@ -58,6 +64,16 @@ export default function CheckoutModal({ isOpen, onClose }) {
       return;
     }
 
+    if (!formData.receiptPhoto) {
+      setPhotoError(
+        language === 'ru'
+          ? 'Пожалуйста, обязательно прикрепите фото чека или подтверждения оплаты!'
+          : "Iltimos, to'lov cheki yoki fotosuratini yuklang! (Fotosurat majburiy)"
+      );
+      return;
+    }
+    setPhotoError('');
+
     setLoading(true);
 
     try {
@@ -67,6 +83,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
         name: i.product.name,
         quantity: i.quantity,
         price: i.product.price,
+        image: i.product.image,
         selectedColor: i.selectedColor
       }));
 
@@ -78,6 +95,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
         deliveryAddress: formData.address || (formData.deliveryType === 'pickup' ? "Do'kondan olib ketish" : 'Keltirilmagan'),
         deliveryType: formData.deliveryType,
         paymentMethod: formData.paymentMethod,
+        receiptPhoto: formData.receiptPhoto,
         items: orderItems,
         subtotal,
         discountAmount,
@@ -97,7 +115,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
         }
       });
 
-      // 5. Send Telegram notification
+      // 5. Send Telegram notification (with mandatory photo)
       await notifyOrder(newOrder);
 
       // 6. Confetti effect
@@ -194,6 +212,28 @@ export default function CheckoutModal({ isOpen, onClose }) {
                   </span>
                 </div>
               </div>
+
+              {/* Uploaded Receipt Photo in Success View */}
+              {completedOrder.receiptPhoto && (
+                <div className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-4 text-left border border-slate-200 dark:border-slate-700/60 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                      <CheckCircle className="w-4 h-4 text-emerald-500" />
+                      <span>Tasdiqlangan to'lov cheki fotosurati:</span>
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                      Biriktirildi
+                    </span>
+                  </div>
+                  <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-48 w-full bg-slate-900">
+                    <img 
+                      src={completedOrder.receiptPhoto} 
+                      alt="To'lov cheki fotosurati" 
+                      className="w-full h-48 object-contain object-center" 
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Telegram Badge Notice */}
               <div className="p-3.5 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800/50 flex items-center gap-3 text-left">
@@ -403,6 +443,134 @@ export default function CheckoutModal({ isOpen, onClose }) {
                     </label>
                   ))}
                 </div>
+              </div>
+
+              {/* 4. Mandatory Photo of Receipt / Product */}
+              <div className="space-y-3 p-4 sm:p-5 rounded-2xl bg-amber-50/70 dark:bg-amber-950/20 border-2 border-dashed border-amber-300 dark:border-amber-700/80 transition-all">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <Camera className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        <span>4. To'lov cheki yoki fotosurati</span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-black bg-rose-600 text-white uppercase tracking-wider shadow-sm">
+                          Majburiy *
+                        </span>
+                      </h4>
+                      <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
+                        Xaridni ro'yxatga olish uchun to'lov cheki skrinshoti yoki tovar fotosuratini yuklang
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {formData.receiptPhoto ? (
+                  <div className="relative rounded-2xl overflow-hidden border border-emerald-500 bg-slate-950 group shadow-md">
+                    <img 
+                      src={formData.receiptPhoto} 
+                      alt="To'lov cheki fotosurati" 
+                      className="w-full h-44 object-contain object-center bg-black/50" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 flex items-end justify-between p-3.5">
+                      <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow">
+                        <CheckCircle className="w-4 h-4" />
+                        <span>Foto muvaffaqiyatli biriktirildi</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, receiptPhoto: '' }))}
+                        className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-all shadow-md active:scale-95"
+                      >
+                        O'chirish / Boshqasini yuklash
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <label className="flex flex-col items-center justify-center p-5 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 bg-white dark:bg-slate-800/80 cursor-pointer transition-all hover:bg-slate-50">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center mb-2 shadow-inner">
+                        <Upload className="w-6 h-6" />
+                      </div>
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                        Qurilmangizdan rasm tanlang (Kamera / Galereya)
+                      </span>
+                      <span className="text-[10px] text-slate-400 mt-0.5">
+                        PNG, JPG, WEBP, JPEG qabul qilinadi
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="sr-only"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                              setFormData(prev => ({ ...prev, receiptPhoto: reader.result }));
+                              setPhotoError('');
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+
+                    {/* Quick 1-click test receipt presets */}
+                    <div className="bg-white/80 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700/80 space-y-2">
+                      <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 block">
+                        💡 Test uchun tayyor namuna cheklar:
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({ 
+                              ...prev, 
+                              receiptPhoto: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&auto=format&fit=crop&q=80' 
+                            }));
+                            setPhotoError('');
+                          }}
+                          className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-sky-100 hover:bg-sky-200 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 transition-colors"
+                        >
+                          📄 Payme Cheki
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({ 
+                              ...prev, 
+                              receiptPhoto: 'https://images.unsplash.com/photo-1556742049-0a67c5574f73?w=800&auto=format&fit=crop&q=80' 
+                            }));
+                            setPhotoError('');
+                          }}
+                          className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-purple-100 hover:bg-purple-200 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 transition-colors"
+                        >
+                          📄 Click Cheki
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const sampleImg = items[0]?.product?.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80';
+                            setFormData(prev => ({ ...prev, receiptPhoto: sampleImg }));
+                            setPhotoError('');
+                          }}
+                          className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 transition-colors"
+                        >
+                          📦 Mahsulot fotosurati
+                        </button>
+                      </div>
+                    </div>
+
+                    {photoError && (
+                      <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-xs font-bold text-rose-600 dark:text-rose-400 flex items-center gap-2 animate-shake">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
+                        <span>{photoError}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Order Notes */}

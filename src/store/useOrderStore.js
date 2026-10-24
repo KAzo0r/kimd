@@ -18,6 +18,7 @@ const initialOrders = [
     discountAmount: 1680000,
     deliveryFee: 0,
     total: 15120000,
+    receiptPhoto: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&auto=format&fit=crop&q=80",
     status: "processing",
     notes: "Iltimos soat 18:00 dan keyin yetkazing."
   },
@@ -38,6 +39,7 @@ const initialOrders = [
     discountAmount: 0,
     deliveryFee: 0,
     total: 6000000,
+    receiptPhoto: "https://images.unsplash.com/photo-1556742049-0a67c5574f73?w=800&auto=format&fit=crop&q=80",
     status: "shipped",
     notes: ""
   },
@@ -57,6 +59,7 @@ const initialOrders = [
     discountAmount: 620000,
     deliveryFee: 0,
     total: 5580000,
+    receiptPhoto: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80",
     status: "delivered",
     notes: "Do'kondan soat 14:00 da olib ketaman"
   },
@@ -76,6 +79,7 @@ const initialOrders = [
     discountAmount: 1050000,
     deliveryFee: 0,
     total: 9450000,
+    receiptPhoto: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80",
     status: "delivered",
     notes: ""
   }

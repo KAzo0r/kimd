@@ -19,21 +19,31 @@ import {
   Image as ImageIcon,
   RefreshCw,
   ExternalLink,
-  AlertCircle
+  AlertCircle,
+  ShoppingBag,
+  Camera,
+  CheckCircle,
+  Clock,
+  Package
 } from 'lucide-react';
 import { useThemeStore } from '../store/useThemeStore';
 import { useJobStore } from '../store/useJobStore';
+import { useOrderStore } from '../store/useOrderStore';
 import { formatSalary } from '../utils/helpers';
 import { translations } from '../constants/translations';
-import { checkBotConnection, sendTestTextMessage, sendTestPhotoMessage } from '../utils/telegramService';
+import { checkBotConnection, sendTestTextMessage, sendTestPhotoMessage, notifyNewOrder } from '../utils/telegramService';
 
 export default function AdminPage() {
   const { language } = useThemeStore();
   const { jobs, companies, applications, deleteJob, toggleJobFeatured } = useJobStore();
+  const { orders, updateOrderStatus } = useOrderStore();
   const t = translations[language] || translations.uz;
 
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'jobs' | 'companies' | 'users' | 'telegram'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'jobs' | 'companies' | 'users' | 'orders' | 'telegram'
   const [jobSearch, setJobSearch] = useState("");
+  const [orderSearch, setOrderSearch] = useState("");
+  const [previewPhoto, setPreviewPhoto] = useState(null);
+  const [resendingOrderId, setResendingOrderId] = useState(null);
 
   // Telegram bot state
   const [botCheckLoading, setBotCheckLoading] = useState(false);
@@ -147,6 +157,21 @@ export default function AdminPage() {
         >
           <Users className="w-4 h-4" />
           <span>Foydalanuvchilar ({userList.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('orders')}
+          className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+            activeTab === 'orders'
+              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+        >
+          <ShoppingBag className="w-4 h-4 text-emerald-300" />
+          <span>Xaridlar & Buyurtmalar ({orders.length})</span>
+          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-400/20 text-amber-300">
+            Foto bilan
+          </span>
         </button>
 
         <button
@@ -447,6 +472,187 @@ export default function AdminPage() {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {/* TAB 4.5: Orders & Product Purchases with Photos */}
+      {activeTab === 'orders' && (
+        <div className="space-y-6 animate-fade-in">
+          
+          {/* Top Search & Filter Bar */}
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+            <div className="relative w-full sm:w-80">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Xaridor ismi, telefon yoki ID bo'yicha..."
+                value={orderSearch}
+                onChange={(e) => setOrderSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm outline-none focus:border-emerald-500 text-slate-900 dark:text-white"
+              />
+            </div>
+
+            <div className="flex items-center gap-3 text-xs text-slate-500">
+              <span className="flex items-center gap-1.5 font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-800">
+                <Camera className="w-3.5 h-3.5" />
+                <span>Barcha xaridlar fotosurat bilan saqlanadi</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Orders Table */}
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-200 dark:border-slate-800">
+                  <tr>
+                    <th className="py-3.5 px-4 font-bold">Buyurtma ID</th>
+                    <th className="py-3.5 px-4 font-bold">Xaridor</th>
+                    <th className="py-3.5 px-4 font-bold">Xarid qilingan tovarlar</th>
+                    <th className="py-3.5 px-4 font-bold">To'lov cheki fotosurati (Majburiy)</th>
+                    <th className="py-3.5 px-4 font-bold">Jami summa</th>
+                    <th className="py-3.5 px-4 font-bold">Holat</th>
+                    <th className="py-3.5 px-4 font-bold text-right">Telegram</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
+                  {orders
+                    .filter(o => 
+                      o.id.toLowerCase().includes(orderSearch.toLowerCase()) ||
+                      o.customerName.toLowerCase().includes(orderSearch.toLowerCase()) ||
+                      o.customerPhone.includes(orderSearch)
+                    )
+                    .map((o) => (
+                      <tr key={o.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                        <td className="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white">
+                          #{o.id}
+                          <div className="text-[10px] font-normal text-slate-400">
+                            {new Date(o.createdAt).toLocaleDateString()}
+                          </div>
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <div className="font-bold text-slate-900 dark:text-white">{o.customerName}</div>
+                          <a href={`tel:${o.customerPhone}`} className="text-[11px] text-blue-600 hover:underline">
+                            {o.customerPhone}
+                          </a>
+                        </td>
+                        <td className="py-3.5 px-4 max-w-xs">
+                          {o.items?.map((it, idx) => (
+                            <div key={idx} className="text-xs truncate">
+                              • <b>{it.name}</b> x{it.quantity}
+                            </div>
+                          ))}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          {o.receiptPhoto ? (
+                            <button
+                              type="button"
+                              onClick={() => setPreviewPhoto(o.receiptPhoto)}
+                              className="group relative flex items-center gap-2 p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-slate-200 dark:border-slate-700 transition-all text-left"
+                              title="To'lov cheki fotosuratini to'liq ko'rish"
+                            >
+                              <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-950 shrink-0 border border-slate-300 dark:border-slate-600">
+                                <img
+                                  src={o.receiptPhoto}
+                                  alt="To'lov cheki"
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                                />
+                              </div>
+                              <div className="text-[10px]">
+                                <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                  <Camera className="w-3 h-3" />
+                                  <span>Foto biriktirilgan</span>
+                                </span>
+                                <span className="text-slate-400 group-hover:underline">Kattalashtirish</span>
+                              </div>
+                            </button>
+                          ) : (
+                            <span className="text-[11px] text-rose-500 font-semibold flex items-center gap-1">
+                              <AlertCircle className="w-3.5 h-3.5" />
+                              <span>Foto mavjud emas</span>
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4 font-black text-slate-900 dark:text-white">
+                          {(o.total || 0).toLocaleString()} UZS
+                          <div className="text-[10px] font-normal uppercase text-slate-400">
+                            {o.paymentMethod || 'Payme'}
+                          </div>
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <select
+                            value={o.status}
+                            onChange={(e) => updateOrderStatus(o.id, e.target.value)}
+                            className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none text-slate-800 dark:text-slate-200"
+                          >
+                            <option value="pending">🟡 Kutilmoqda</option>
+                            <option value="processing">🔵 Jarayonda</option>
+                            <option value="shipped">🚚 Yetkazilmoqda</option>
+                            <option value="delivered">🟢 Yetkazildi</option>
+                            <option value="cancelled">🔴 Bekor qilindi</option>
+                          </select>
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          <button
+                            type="button"
+                            disabled={resendingOrderId === o.id}
+                            onClick={async () => {
+                              setResendingOrderId(o.id);
+                              try {
+                                const res = await notifyNewOrder(o);
+                                if (res.ok) {
+                                  alert(`Buyurtma #${o.id} va to'lov fotosurati @apexishqidirish_bot ga muvaffaqiyatli yuborildi!`);
+                                } else {
+                                  alert(`Xatolik: ${res.error || "Telegramda @apexishqidirish_bot ga kirib /start bosing."}`);
+                                }
+                              } catch (err) {
+                                alert(`Xatolik: ${err.message}`);
+                              } finally {
+                                setResendingOrderId(null);
+                              }
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-[11px] transition-all shadow-sm active:scale-95 disabled:opacity-50"
+                          >
+                            <Send className="w-3 h-3" />
+                            <span>{resendingOrderId === o.id ? 'Yuborilmoqda...' : 'Botga yuborish'}</span>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Lightbox Modal for Photo Preview */}
+          {previewPhoto && (
+            <div 
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
+              onClick={() => setPreviewPhoto(null)}
+            >
+              <div 
+                className="relative max-w-2xl w-full bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-700 p-4"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-800 text-white">
+                  <div className="flex items-center gap-2 text-sm font-bold">
+                    <Camera className="w-4 h-4 text-emerald-400" />
+                    <span>To'lov cheki fotosurati (Haqiqiy tasdiqnoma)</span>
+                  </div>
+                  <button
+                    onClick={() => setPreviewPhoto(null)}
+                    className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold"
+                  >
+                    Yopish ✕
+                  </button>
+                </div>
+                <div className="max-h-[70vh] flex items-center justify-center bg-black/50 rounded-2xl overflow-hidden">
+                  <img src={previewPhoto} alt="Chek to'liq hajmi" className="max-h-[65vh] w-auto object-contain" />
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       )}
 

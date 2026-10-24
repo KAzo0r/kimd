@@ -44,3 +44,24 @@ export const notifyNewApplication = async ({ job, applicantInfo, coverLetter }, 
 export const notifyNewUser = async (user, credentials = {}) => {
   return callTelegramApi('new_user', { user, ...credentials });
 };
+
+export const notifyNewOrder = async (order, credentials = {}) => {
+  return callTelegramApi('new_order', { order, ...credentials });
+};
+
+export const notifyNewProduct = async (product, credentials = {}) => {
+  return callTelegramApi('new_product', { product, ...credentials });
+};
+
+export const notifyProductUpdate = async (product, credentials = {}) => {
+  return callTelegramApi('product_update', { product, ...credentials });
+};
+
+export const notifyLowStock = async (product, credentials = {}) => {
+  return callTelegramApi('low_stock', { product, ...credentials });
+};
+
+export const notifyCustomerRegister = async (customer, credentials = {}) => {
+  return callTelegramApi('customer_register', { customer, ...credentials });
+};
+

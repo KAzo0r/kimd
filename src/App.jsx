@@ -11,6 +11,10 @@ import AuthPage from './pages/AuthPage';
 import SeekerDashboardPage from './pages/SeekerDashboardPage';
 import EmployerDashboardPage from './pages/EmployerDashboardPage';
 import AdminPage from './pages/AdminPage';
+import ShopPage from './pages/ShopPage';
+import ProductDetailPage from './pages/ProductDetailPage';
+import CartPage from './pages/CartPage';
+import FavoritesPage from './pages/FavoritesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { useThemeStore } from './store/useThemeStore';
 
@@ -52,6 +56,14 @@ export default function App() {
             <Route path="/jobs/:id" element={<JobDetailsPage />} />
             <Route path="/companies" element={<CompaniesPage />} />
             <Route path="/companies/:slug" element={<CompanyDetailsPage />} />
+            
+            {/* E-Commerce Shopping & Product Purchase Routes */}
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/shop/:id" element={<ProductDetailPage />} />
+            <Route path="/products/:id" element={<ProductDetailPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/favorites" element={<FavoritesPage />} />
+
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/dashboard" element={<SeekerDashboardPage />} />
             <Route path="/employer" element={<EmployerDashboardPage />} />

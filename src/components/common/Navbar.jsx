@@ -17,17 +17,21 @@ import {
   Building2, 
   FileText,
   LogOut,
-  ChevronDown
+  ChevronDown,
+  ShoppingBag
 } from 'lucide-react';
 import { useThemeStore } from '../../store/useThemeStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useJobStore } from '../../store/useJobStore';
+import { useCartStore } from '../../store/useCartStore';
 import { translations } from '../../constants/translations';
 
 export default function Navbar() {
   const { theme, toggleTheme, language, setLanguage } = useThemeStore();
   const { user, isAuthenticated, logout, quickDemoLogin } = useAuthStore();
   const { favorites, notifications, markNotificationRead, markAllNotificationsRead } = useJobStore();
+  const { items: cartItems } = useCartStore();
+  const cartCount = cartItems.reduce((acc, curr) => acc + curr.quantity, 0);
   
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
@@ -105,6 +109,20 @@ export default function Navbar() {
               >
                 {t.companies}
               </Link>
+              <Link 
+                to="/shop" 
+                className={`px-3.5 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-all ${
+                  isActive('/shop')
+                    ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 dark:text-emerald-400 font-semibold'
+                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                }`}
+              >
+                <ShoppingBag className="w-4 h-4 text-emerald-500" />
+                <span>Do'kon / Xarid</span>
+                <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                  Foto chek
+                </span>
+              </Link>
               {user?.role === 'admin' && (
                 <Link 
                   to="/admin" 
@@ -168,6 +186,20 @@ export default function Navbar() {
             >
               {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
             </button>
+
+            {/* Shopping Cart Icon */}
+            <Link
+              to="/cart"
+              className="relative p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center"
+              title="Xarid savati / Корзина"
+            >
+              <ShoppingBag className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              {cartCount > 0 && (
+                <span className="absolute top-1 right-1 w-4 h-4 bg-emerald-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
 
             {/* Favorites Icon */}
             <Link
@@ -455,22 +487,30 @@ export default function Navbar() {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-3 pb-6 space-y-3 animate-fade-in">
-          <div className="grid grid-cols-2 gap-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+          <div className="grid grid-cols-3 gap-2 pb-2 border-b border-slate-100 dark:border-slate-800">
             <Link
               to="/jobs"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-sm font-semibold text-slate-800 dark:text-slate-200"
+              className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200"
             >
               <Briefcase className="w-4 h-4 text-blue-600" />
-              {t.jobs}
+              <span>{t.jobs}</span>
             </Link>
             <Link
               to="/companies"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 text-sm font-semibold text-slate-800 dark:text-slate-200"
+              className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200"
             >
-              <Building2 className="w-4 h-4 text-emerald-600" />
-              {t.companies}
+              <Building2 className="w-4 h-4 text-blue-600" />
+              <span>{t.companies}</span>
+            </Link>
+            <Link
+              to="/shop"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-1.5 p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-xs font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+            >
+              <ShoppingBag className="w-4 h-4 text-emerald-500" />
+              <span>Do'kon</span>
             </Link>
           </div>
 
