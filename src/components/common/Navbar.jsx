@@ -118,10 +118,7 @@ export default function Navbar() {
                 }`}
               >
                 <ShoppingBag className="w-4 h-4 text-emerald-500" />
-                <span>Do'kon / Xarid</span>
-                <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
-                  Foto chek
-                </span>
+                <span>Do'kon</span>
               </Link>
               {user?.role === 'admin' && (
                 <Link 

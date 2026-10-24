@@ -357,7 +357,7 @@ export const mockProducts = [
     isPopular: true,
     colors: ["Midnight", "Starlight", "Space Gray", "Silver"],
     images: [
-      "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?q=80&w=1000&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?q=80&w=1000&auto=format&fit=crop"
     ],
     description: "Katta va tiniq 15.3 dyuymli Liquid Retina ekrani, kuchli M3 chipi va bor-yo'g'i 11.5 mm qalinlikdagi nafis korpus. 18 soatlik avtonomiya.",
     descriptionRu: "Большой экран 15.3 дюйма, мощный процессор M3 и поразительно тонкий алюминиевый корпус 11.5 мм.",
