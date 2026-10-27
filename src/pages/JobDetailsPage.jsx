@@ -47,16 +47,16 @@ export default function JobDetailsPage() {
     return (
       <div className="py-20 max-w-xl mx-auto px-4 text-center space-y-4">
         <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-          Vakansiya topilmadi
+          {language === 'ru' ? 'Вакансия не найдена' : language === 'en' ? 'Job not found' : 'Vakansiya topilmadi'}
         </h2>
         <p className="text-sm text-slate-500">
-          Ushbu vakansiya yopilgan yoki o'chirilgan bo'lishi mumkin.
+          {language === 'ru' ? 'Эта вакансия возможно закрыта или удалена.' : language === 'en' ? 'This vacancy might have been closed or removed.' : "Ushbu vakansiya yopilgan yoki o'chirilgan bo'lishi mumkin."}
         </p>
         <Link
           to="/jobs"
           className="inline-block px-6 py-2.5 bg-blue-600 text-white font-semibold text-xs rounded-xl shadow-md"
         >
-          Barcha vakansiyalarga qaytish
+          {t.allVacancies || (language === 'ru' ? 'Все вакансии' : language === 'en' ? 'All vacancies' : 'Barcha vakansiyalarga qaytish')}
         </Link>
       </div>
     );
@@ -93,9 +93,9 @@ export default function JobDetailsPage() {
       {/* Breadcrumbs & Back */}
       <div className="flex items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
         <div className="flex items-center gap-2">
-          <Link to="/" className="hover:text-blue-600">Bosh sahifa</Link>
+          <Link to="/" className="hover:text-blue-600">{t.home}</Link>
           <ChevronRight className="w-3.5 h-3.5" />
-          <Link to="/jobs" className="hover:text-blue-600">Vakansiyalar</Link>
+          <Link to="/jobs" className="hover:text-blue-600">{t.jobs}</Link>
           <ChevronRight className="w-3.5 h-3.5" />
           <span className="text-slate-800 dark:text-slate-200 font-semibold truncate max-w-xs">{job.title}</span>
         </div>
@@ -105,7 +105,7 @@ export default function JobDetailsPage() {
           className="flex items-center gap-1 hover:text-blue-600 font-medium"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Orqaga</span>
+          <span>{t.back || (language === 'ru' ? 'Назад' : language === 'en' ? 'Back' : 'Orqaga')}</span>
         </button>
       </div>
 
@@ -192,7 +192,7 @@ export default function JobDetailsPage() {
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-0.5">
-                  Taklif etilayotgan oylik maosh:
+                  {language === 'ru' ? 'Предлагаемая зарплата:' : language === 'en' ? 'Offered salary:' : 'Taklif etilayotgan oylik maosh:'}
                 </span>
                 <span className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
                   {formatSalary(job.salaryMin, job.salaryMax, job.salaryNegotiable, language)}
@@ -222,10 +222,10 @@ export default function JobDetailsPage() {
                 {getFormatLabel(job.format, language)}
               </span>
               <span className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">
-                Tajriba: {getExperienceLabel(job.experience, language)}
+                {language === 'ru' ? 'Опыт' : language === 'en' ? 'Experience' : 'Tajriba'}: {getExperienceLabel(job.experience, language)}
               </span>
               <span className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">
-                Shahar: {job.city}
+                {language === 'ru' ? 'Город' : language === 'en' ? 'City' : 'Shahar'}: {job.city}
               </span>
               {job.featured && (
                 <span className="px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-semibold border border-amber-200">
@@ -287,8 +287,12 @@ export default function JobDetailsPage() {
             {/* Bottom Apply Bar */}
             <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <p className="text-xs text-slate-500">Qiziqdingizmi?</p>
-                <p className="text-sm font-bold text-slate-900 dark:text-white">O'z rezyumengizni ish beruvchiga yuboring</p>
+                <p className="text-xs text-slate-500">
+                  {language === 'ru' ? 'Заинтересовала вакансия?' : language === 'en' ? 'Interested in this job?' : 'Qiziqdingizmi?'}
+                </p>
+                <p className="text-sm font-bold text-slate-900 dark:text-white">
+                  {language === 'ru' ? 'Отправьте резюме работодателю прямо сейчас' : language === 'en' ? 'Submit your resume to the employer right now' : "O'z rezyumengizni ish beruvchiga yuboring"}
+                </p>
               </div>
 
               {!hasApplied ? (
@@ -348,7 +352,7 @@ export default function JobDetailsPage() {
                   {company.verified && <CheckCircle2 className="w-4 h-4 text-blue-500" />}
                 </h4>
                 <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                  {company.industryUz || company.industry}
+                  {language === 'ru' ? (company.industryRu || company.industry) : language === 'en' ? (company.industryEn || company.industry) : (company.industryUz || company.industry)}
                 </p>
               </div>
             </div>
@@ -359,16 +363,16 @@ export default function JobDetailsPage() {
 
             <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400">
               <div className="flex items-center justify-between">
-                <span className="text-slate-400">Joylashuv:</span>
+                <span className="text-slate-400">{language === 'ru' ? 'Локация:' : language === 'en' ? 'Location:' : 'Joylashuv:'}</span>
                 <span className="font-semibold text-slate-900 dark:text-white">{company.location}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-400">Xodimlar:</span>
+                <span className="text-slate-400">{language === 'ru' ? 'Сотрудники:' : language === 'en' ? 'Employees:' : 'Xodimlar:'}</span>
                 <span className="font-semibold text-slate-900 dark:text-white">{company.employees}</span>
               </div>
               {company.website && (
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Sayt:</span>
+                  <span className="text-slate-400">{language === 'ru' ? 'Сайт:' : language === 'en' ? 'Website:' : 'Sayt:'}</span>
                   <a href={company.website} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
                     {company.website.replace('https://', '')}
                   </a>
@@ -381,7 +385,7 @@ export default function JobDetailsPage() {
                 to={`/companies/${company.slug || company.id}`}
                 className="w-full py-2.5 px-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors"
               >
-                <span>Kompaniya sahifasi</span>
+                <span>{language === 'ru' ? 'Страница компании' : language === 'en' ? 'Company page' : 'Kompaniya sahifasi'}</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -391,10 +395,14 @@ export default function JobDetailsPage() {
           <div className="p-5 rounded-3xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/60 text-xs space-y-2 text-slate-700 dark:text-slate-300">
             <div className="font-bold text-blue-900 dark:text-blue-200 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-blue-600" />
-              <span>IshTop.uz kafolati</span>
+              <span>{language === 'ru' ? 'Гарантия IshTop.uz' : language === 'en' ? 'IshTop.uz Guarantee' : 'IshTop.uz kafolati'}</span>
             </div>
             <p className="leading-relaxed text-slate-600 dark:text-slate-400">
-              IshTop.uz platformasidagi barcha vakansiyalar xavfsizlik filtrlari orqali tekshiriladi. Nomzodlardan ariza uchun hech qachon pul talab qilinmaydi.
+              {language === 'ru' 
+                ? 'Все вакансии на платформе IshTop.uz проходят проверку. С соискателей никогда не взимается плата за отклик.' 
+                : language === 'en' 
+                ? 'All vacancies on IshTop.uz are verified. Candidates are never charged any fees for applying.' 
+                : "IshTop.uz platformasidagi barcha vakansiyalar xavfsizlik filtrlari orqali tekshiriladi. Nomzodlardan ariza uchun hech qachon pul talab qilinmaydi."}
             </p>
           </div>
 

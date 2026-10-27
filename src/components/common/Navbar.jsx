@@ -82,7 +82,7 @@ export default function Navbar() {
                   </span>
                 </div>
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:inline -mt-0.5">
-                  Ish va xodimlar portali
+                  {language === 'ru' ? 'Портал вакансий и электроники' : language === 'en' ? 'Jobs & Electronics Portal' : 'Ish va xodimlar portali'}
                 </span>
               </div>
             </Link>
@@ -118,7 +118,7 @@ export default function Navbar() {
                 }`}
               >
                 <ShoppingBag className="w-4 h-4 text-emerald-500" />
-                <span>Do'kon</span>
+                <span>{t.navShop || t.shop || "Do'kon"}</span>
               </Link>
               {user?.role === 'admin' && (
                 <Link 
@@ -179,7 +179,8 @@ export default function Navbar() {
             <button
               onClick={toggleTheme}
               className="p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              aria-label="Toggle theme"
+              title={theme === 'dark' ? t.lightTheme : t.darkTheme}
+              aria-label={t.toggleTheme}
             >
               {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
             </button>
@@ -238,7 +239,7 @@ export default function Navbar() {
                         onClick={markAllNotificationsRead}
                         className="text-xs text-blue-600 hover:underline dark:text-blue-400 font-medium"
                       >
-                        Barchasini o'qilgan deb belgilash
+                        {language === 'ru' ? 'Отметить все прочитанными' : language === 'en' ? 'Mark all as read' : "Barchasini o'qilgan deb belgilash"}
                       </button>
                     )}
                   </div>
@@ -246,7 +247,7 @@ export default function Navbar() {
                   <div className="max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60">
                     {notifications.length === 0 ? (
                       <div className="p-6 text-center text-xs text-slate-400">
-                        Hozircha yangi bildirishnomalar yo'q
+                        {language === 'ru' ? 'Новых уведомлений пока нет' : language === 'en' ? 'No new notifications yet' : "Hozircha yangi bildirishnomalar yo'q"}
                       </div>
                     ) : (
                       notifications.slice(0, 5).map((item) => (
@@ -320,7 +321,7 @@ export default function Navbar() {
                 {userDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl py-2 z-50 animate-fade-in">
                     <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-                      <p className="text-xs text-slate-500 dark:text-slate-400">Kirilgan profil:</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{language === 'ru' ? 'Текущий профиль:' : language === 'en' ? 'Signed in as:' : 'Kirilgan profil:'}</p>
                       <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{user.name}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300">
@@ -411,7 +412,7 @@ export default function Navbar() {
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
                           }`}
                         >
-                          Izlovchi
+                          {t.demoSeekerBtn || (language === 'ru' ? 'Соискатель' : 'Izlovchi')}
                         </button>
                         <button
                           onClick={() => handleRoleSwitch('employer')}
@@ -421,7 +422,7 @@ export default function Navbar() {
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
                           }`}
                         >
-                          Ish beruvchi
+                          {t.demoEmployerBtn || (language === 'ru' ? 'Работодатель' : 'Ish beruvchi')}
                         </button>
                         <button
                           onClick={() => handleRoleSwitch('admin')}
@@ -431,7 +432,7 @@ export default function Navbar() {
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
                           }`}
                         >
-                          Admin
+                          {t.demoAdminBtn || 'Admin'}
                         </button>
                       </div>
                     </div>
@@ -507,7 +508,7 @@ export default function Navbar() {
               className="flex items-center gap-1.5 p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-xs font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
             >
               <ShoppingBag className="w-4 h-4 text-emerald-500" />
-              <span>Do'kon</span>
+              <span>{t.navShop || t.shop || "Do'kon"}</span>
             </Link>
           </div>
 
@@ -522,7 +523,7 @@ export default function Navbar() {
                 <User className="w-4 h-4 text-blue-500" />
                 {t.seekerCabinet}
               </span>
-              <span className="text-xs text-slate-400">Rezyume & Arizalar</span>
+              <span className="text-xs text-slate-400">{language === 'ru' ? 'Резюме и Отклики' : language === 'en' ? 'CV & Applications' : 'Rezyume & Arizalar'}</span>
             </Link>
             <Link
               to="/employer"
@@ -533,7 +534,7 @@ export default function Navbar() {
                 <Building2 className="w-4 h-4 text-emerald-500" />
                 {t.employerCabinet}
               </span>
-              <span className="text-xs text-slate-400">Nomzodlar</span>
+              <span className="text-xs text-slate-400">{language === 'ru' ? 'Кандидаты' : language === 'en' ? 'Candidates' : 'Nomzodlar'}</span>
             </Link>
             <Link
               to="/admin"
@@ -544,7 +545,7 @@ export default function Navbar() {
                 <ShieldCheck className="w-4 h-4 text-indigo-500" />
                 {t.adminPanel}
               </span>
-              <span className="text-xs text-slate-400">Boshqaruv</span>
+              <span className="text-xs text-slate-400">{language === 'ru' ? 'Управление' : language === 'en' ? 'Management' : 'Boshqaruv'}</span>
             </Link>
           </div>
 

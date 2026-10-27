@@ -9,7 +9,7 @@ export function formatSalary(min, max, isNegotiable = false, lang = 'uz') {
     return new Intl.NumberFormat('ru-RU').format(num);
   };
 
-  const curr = lang === 'en' ? 'UZS' : "so'm";
+  const curr = lang === 'en' ? 'UZS' : lang === 'ru' ? 'сум' : "so'm";
 
   if (min && max) {
     return `${formatNum(min)} – ${formatNum(max)} ${curr}`;

@@ -34,13 +34,13 @@ export default function CompanyDetailsPage() {
     return (
       <div className="py-20 max-w-xl mx-auto px-4 text-center space-y-4">
         <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-          Kompaniya topilmadi
+          {language === 'ru' ? 'Компания не найдена' : language === 'en' ? 'Company not found' : 'Kompaniya topilmadi'}
         </h2>
         <Link
           to="/companies"
           className="inline-block px-6 py-2.5 bg-blue-600 text-white font-semibold text-xs rounded-xl shadow-md"
         >
-          Kompaniyalar katalogiga qaytish
+          {language === 'ru' ? 'Вернуться в каталог компаний' : language === 'en' ? 'Return to companies catalog' : 'Kompaniyalar katalogiga qaytish'}
         </Link>
       </div>
     );
@@ -59,7 +59,7 @@ export default function CompanyDetailsPage() {
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Barcha kompaniyalar</span>
+          <span>{language === 'ru' ? 'Все компании' : language === 'en' ? 'All companies' : 'Barcha kompaniyalar'}</span>
         </Link>
       </div>
 
@@ -104,7 +104,7 @@ export default function CompanyDetailsPage() {
                   )}
                 </div>
                 <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-                  {company.industryUz || company.industry}
+                  {language === 'ru' ? (company.industryRu || company.industry) : language === 'en' ? (company.industryEn || company.industry) : (company.industryUz || company.industry)}
                 </p>
               </div>
             </div>
@@ -114,11 +114,13 @@ export default function CompanyDetailsPage() {
               <div className="flex items-center gap-1.5 px-3.5 py-1.5 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 rounded-xl text-xs font-bold border border-amber-200 dark:border-amber-900/60">
                 <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                 <span>{company.rating}</span>
-                <span className="text-[11px] text-amber-600/70 font-normal">({company.reviewsCount} fikr)</span>
+                <span className="text-[11px] text-amber-600/70 font-normal">
+                  ({company.reviewsCount} {language === 'ru' ? 'отзывов' : language === 'en' ? 'reviews' : 'fikr'})
+                </span>
               </div>
 
               <div className="px-3.5 py-1.5 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 rounded-xl text-xs font-bold border border-blue-200 dark:border-blue-900/60">
-                {companyJobs.length} ta ochiq vakansiya
+                {language === 'ru' ? `${companyJobs.length} открытых вакансий` : language === 'en' ? `${companyJobs.length} open jobs` : `${companyJobs.length} ta ochiq vakansiya`}
               </div>
             </div>
 
@@ -133,7 +135,7 @@ export default function CompanyDetailsPage() {
             <span>•</span>
             <span className="flex items-center gap-1.5">
               <Users className="w-4 h-4 text-slate-400" />
-              <span>{company.employees} xodim</span>
+              <span>{company.employees} {language === 'ru' ? 'сотрудников' : language === 'en' ? 'employees' : 'xodim'}</span>
             </span>
             {company.website && (
               <>
@@ -159,7 +161,7 @@ export default function CompanyDetailsPage() {
                 : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            Vakansiyalar ({companyJobs.length})
+            {t.jobs || (language === 'ru' ? 'Вакансии' : language === 'en' ? 'Vacancies' : 'Vakansiyalar')} ({companyJobs.length})
           </button>
 
           <button
@@ -170,7 +172,7 @@ export default function CompanyDetailsPage() {
                 : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            Kompaniya haqida
+            {language === 'ru' ? 'О компании' : language === 'en' ? 'About company' : 'Kompaniya haqida'}
           </button>
 
           <button
@@ -181,7 +183,7 @@ export default function CompanyDetailsPage() {
                 : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            Xodimlar fikrlari ({companyReviews.length > 0 ? companyReviews.length : 2})
+            {language === 'ru' ? 'Отзывы сотрудников' : language === 'en' ? 'Employee reviews' : 'Xodimlar fikrlari'} ({companyReviews.length > 0 ? companyReviews.length : 2})
           </button>
         </div>
 
@@ -191,12 +193,12 @@ export default function CompanyDetailsPage() {
       {activeTab === 'jobs' && (
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-            {company.name}dagi barcha ochiq vakansiyalar
+            {language === 'ru' ? `Все открытые вакансии в ${company.name}` : language === 'en' ? `All open vacancies at ${company.name}` : `${company.name}dagi barcha ochiq vakansiyalar`}
           </h2>
 
           {companyJobs.length === 0 ? (
             <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
-              <p className="text-slate-500">Hozirda bu kompaniyada yangi vakansiyalar mavjud emas.</p>
+              <p className="text-slate-500">{language === 'ru' ? 'В настоящее время в этой компании нет открытых вакансий.' : language === 'en' ? 'Currently there are no open vacancies in this company.' : 'Hozirda bu kompaniyada yangi vakansiyalar mavjud emas.'}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -217,7 +219,7 @@ export default function CompanyDetailsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 space-y-6">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-              Kompaniya haqida batafsil
+              {language === 'ru' ? 'Подробнее о компании' : language === 'en' ? 'About company' : 'Kompaniya haqida batafsil'}
             </h3>
             <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
               {language === 'ru' ? company.descriptionRu : company.descriptionUz}
@@ -226,7 +228,7 @@ export default function CompanyDetailsPage() {
             {company.perks && company.perks.length > 0 && (
               <div className="space-y-3 pt-6 border-t border-slate-100 dark:border-slate-800">
                 <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                  Kompaniya taklif etadigan imtiyozlar:
+                  {language === 'ru' ? 'Льготы и преимущества компании:' : language === 'en' ? 'Perks offered by company:' : 'Kompaniya taklif etadigan imtiyozlar:'}
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {company.perks.map((perk, idx) => (
@@ -242,20 +244,20 @@ export default function CompanyDetailsPage() {
 
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Ish beruvchi ma'lumotlari
+              {language === 'ru' ? 'Информация о работодателе' : language === 'en' ? 'Employer information' : "Ish beruvchi ma'lumotlari"}
             </h4>
             <div className="space-y-3 text-xs text-slate-600 dark:text-slate-400">
               <div>
-                <span className="text-slate-400 block mb-0.5">Yuridik maqom:</span>
-                <span className="font-semibold text-slate-900 dark:text-white">Tasdiqlangan korporativ soliq to'lovchi</span>
+                <span className="text-slate-400 block mb-0.5">{language === 'ru' ? 'Юридический статус:' : language === 'en' ? 'Legal status:' : 'Yuridik maqom:'}</span>
+                <span className="font-semibold text-slate-900 dark:text-white">{language === 'ru' ? 'Проверенный корпоративный налогоплательщик' : language === 'en' ? 'Verified corporate taxpayer' : "Tasdiqlangan korporativ soliq to'lovchi"}</span>
               </div>
               <div>
-                <span className="text-slate-400 block mb-0.5">Bosh ofis:</span>
+                <span className="text-slate-400 block mb-0.5">{language === 'ru' ? 'Головной офис:' : language === 'en' ? 'Headquarters:' : 'Bosh ofis:'}</span>
                 <span className="font-semibold text-slate-900 dark:text-white">{company.location}</span>
               </div>
               <div>
-                <span className="text-slate-400 block mb-0.5">Ishonchlilik reytingi:</span>
-                <span className="font-semibold text-emerald-600 dark:text-emerald-400">99.2% Ijobiy</span>
+                <span className="text-slate-400 block mb-0.5">{language === 'ru' ? 'Рейтинг доверия:' : language === 'en' ? 'Trust score:' : 'Ishonchlilik reytingi:'}</span>
+                <span className="font-semibold text-emerald-600 dark:text-emerald-400">{language === 'ru' ? '99.2% Положительно' : language === 'en' ? '99.2% Positive' : '99.2% Ijobiy'}</span>
               </div>
             </div>
           </div>
@@ -266,7 +268,7 @@ export default function CompanyDetailsPage() {
       {activeTab === 'reviews' && (
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 space-y-6">
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-            Xodimlar va sobiq mutaxassislar fikrlari
+            {language === 'ru' ? 'Отзывы сотрудников и специалистов' : language === 'en' ? 'Reviews from employees & specialists' : 'Xodimlar va sobiq mutaxassislar fikrlari'}
           </h3>
 
           <div className="space-y-4">

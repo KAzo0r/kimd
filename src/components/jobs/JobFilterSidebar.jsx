@@ -26,13 +26,14 @@ export default function JobFilterSidebar({ isMobile = false, onClose }) {
     { id: "formatInternship", label: t.formatInternship }
   ];
 
+  const curSuffix = language === 'ru' ? " сум" : language === 'en' ? " UZS" : " so'm";
   const salaryPresets = [
     { label: t.all, min: 0 },
-    { label: "5 000 000+ so'm", min: 5000000 },
-    { label: "10 000 000+ so'm", min: 10000000 },
-    { label: "15 000 000+ so'm", min: 15000000 },
-    { label: "25 000 000+ so'm", min: 25000000 },
-    { label: "35 000 000+ so'm", min: 35000000 }
+    { label: `5 000 000+${curSuffix}`, min: 5000000 },
+    { label: `10 000 000+${curSuffix}`, min: 10000000 },
+    { label: `15 000 000+${curSuffix}`, min: 15000000 },
+    { label: `25 000 000+${curSuffix}`, min: 25000000 },
+    { label: `35 000 000+${curSuffix}`, min: 35000000 }
   ];
 
   return (
@@ -181,9 +182,9 @@ export default function JobFilterSidebar({ isMobile = false, onClose }) {
       {isMobile && (
         <button
           onClick={onClose}
-          className="w-full py-2.5 px-4 bg-blue-600 text-white font-semibold text-xs rounded-xl shadow-md"
+          className="w-full py-2.5 px-4 bg-blue-600 text-white font-semibold text-xs rounded-xl shadow-md hover:bg-blue-700 transition-colors"
         >
-          Filtrlarni qo'llash
+          {language === 'ru' ? 'Применить фильтры' : language === 'en' ? 'Apply filters' : "Filtrlarni qo'llash"}
         </button>
       )}
 

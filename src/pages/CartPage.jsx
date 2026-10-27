@@ -63,7 +63,7 @@ export default function CartPage() {
               <span>{t.cartTitle}</span>
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              {totalItems} ta mahsulot
+              {totalItems} {language === 'ru' ? 'товаров' : language === 'en' ? 'items' : 'ta mahsulot'}
             </p>
           </div>
 
@@ -182,7 +182,7 @@ export default function CartPage() {
                         </span>
                         {item.quantity > 1 && (
                           <span className="text-[11px] text-slate-400">
-                            {(p.price).toLocaleString()} {t.som} / dona
+                            {(p.price).toLocaleString()} {t.som} {language === 'ru' ? '/ шт.' : language === 'en' ? '/ pc' : '/ dona'}
                           </span>
                         )}
                       </div>
@@ -191,7 +191,7 @@ export default function CartPage() {
                       <button
                         onClick={() => removeFromCart(p.id, item.selectedColor)}
                         className="p-2 text-slate-400 hover:text-red-500 transition-colors"
-                        title="O'chirish"
+                        title={t.remove}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -265,7 +265,7 @@ export default function CartPage() {
                     {/* Quick test promo chips */}
                     <div className="pt-3 border-t border-slate-100 dark:border-slate-800 mt-2">
                       <p className="text-[11px] text-slate-400 mb-1.5 font-medium">
-                        Sinab ko'rish uchun promokodlar:
+                        {language === 'ru' ? 'Промокоды для проверки:' : language === 'en' ? 'Promo codes to try:' : "Sinab ko'rish uchun promokodlar:"}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
                         {['UZBEK10', 'BAHOR20', 'YANGI15'].map((code) => (
@@ -313,7 +313,7 @@ export default function CartPage() {
 
                   {deliveryFee === 0 && (
                     <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-950/30 p-2 rounded-lg">
-                      🎉 500,000 so'mdan oshgani uchun yetkazib berish bepul!
+                      {language === 'ru' ? '🎉 Бесплатная доставка при заказе свыше 500 000 сум!' : language === 'en' ? '🎉 Free delivery for orders over 500,000 UZS!' : "🎉 500,000 so'mdan oshgani uchun yetkazib berish bepul!"}
                     </p>
                   )}
 
@@ -338,11 +338,11 @@ export default function CartPage() {
                 <div className="flex items-center justify-center gap-4 text-[11px] text-slate-400 pt-2">
                   <span className="flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>Xavfsiz to'lov</span>
+                    <span>{t.safePayment || (language === 'ru' ? 'Безопасная оплата' : language === 'en' ? 'Secure payment' : "Xavfsiz to'lov")}</span>
                   </span>
                   <span className="flex items-center gap-1">
                     <Truck className="w-3.5 h-3.5 text-blue-500" />
-                    <span>Tezkor yetkazish</span>
+                    <span>{t.fastDelivery || (language === 'ru' ? 'Быстрая доставка' : language === 'en' ? 'Fast delivery' : 'Tezkor yetkazish')}</span>
                   </span>
                 </div>
               </div>

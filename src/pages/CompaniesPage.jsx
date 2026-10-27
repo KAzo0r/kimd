@@ -14,13 +14,13 @@ export default function CompaniesPage() {
   const [selectedIndustry, setSelectedIndustry] = useState("all");
 
   const industries = [
-    { id: "all", label: "Barcha sohalar" },
-    { id: "fintech", label: "Fintex va To'lovlar" },
-    { id: "it", label: "IT va Dasturiy ta'minot" },
-    { id: "retail", label: "Chakana savdo (Retail)" },
-    { id: "telecom", label: "Telekom" },
-    { id: "banking", label: "Bank xizmatlari" },
-    { id: "construction", label: "Qurilish va Develompent" }
+    { id: "all", label: language === 'ru' ? "Все сферы" : language === 'en' ? "All industries" : "Barcha sohalar" },
+    { id: "fintech", label: language === 'ru' ? "Финтех и платежи" : language === 'en' ? "Fintech & Payments" : "Fintex va To'lovlar" },
+    { id: "it", label: language === 'ru' ? "ИТ и разработка ПО" : language === 'en' ? "IT & Software" : "IT va Dasturiy ta'minot" },
+    { id: "retail", label: language === 'ru' ? "Розничная торговля" : language === 'en' ? "Retail" : "Chakana savdo (Retail)" },
+    { id: "telecom", label: language === 'ru' ? "Телеком" : language === 'en' ? "Telecom" : "Telekom" },
+    { id: "banking", label: language === 'ru' ? "Банковские услуги" : language === 'en' ? "Banking services" : "Bank xizmatlari" },
+    { id: "construction", label: language === 'ru' ? "Строительство" : language === 'en' ? "Construction & Dev" : "Qurilish va Develompent" }
   ];
 
   const filteredCompanies = useMemo(() => {
@@ -56,13 +56,13 @@ export default function CompaniesPage() {
         <div className="relative z-10 max-w-2xl space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-xs font-semibold backdrop-blur-md">
             <Building2 className="w-3.5 h-3.5" />
-            <span>O'zbekistonning eng yaxshi ish beruvchilari</span>
+            <span>{language === 'ru' ? 'Лучшие работодатели Узбекистана' : language === 'en' ? 'Top employers of Uzbekistan' : "O'zbekistonning eng yaxshi ish beruvchilari"}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            {t.companies} katalogi
+            {language === 'ru' ? `Каталог ${t.companies?.toLowerCase() || 'компаний'}` : language === 'en' ? 'Company Catalog' : `${t.companies} katalogi`}
           </h1>
           <p className="text-sm sm:text-base text-blue-100 leading-relaxed">
-            Nufuzli milliy va xalqaro kompaniyalar muhiti, ochiq vakansiyalari va xodimlarning haqiqiy baholari bilan tanishing.
+            {language === 'ru' ? 'Познакомьтесь с ведущими национальными и международными компаниями, их открытыми вакансиями и реальными отзывами.' : language === 'en' ? 'Explore leading national and global companies, open job vacancies, and authentic employee reviews.' : "Nufuzli milliy va xalqaro kompaniyalar muhiti, ochiq vakansiyalari va xodimlarning haqiqiy baholari bilan tanishing."}
           </p>
         </div>
       </div>
@@ -76,13 +76,13 @@ export default function CompaniesPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Kompaniya nomi, yo'nalishi yoki joylashuvi..."
+              placeholder={language === 'ru' ? 'Название компании, сфера или город...' : language === 'en' ? 'Company name, industry or location...' : "Kompaniya nomi, yo'nalishi yoki joylashuvi..."}
               className="w-full pl-12 pr-4 py-3 text-sm rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div className="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">
-            {filteredCompanies.length} ta kompaniya topildi
+            {language === 'ru' ? `Найдено компаний: ${filteredCompanies.length}` : language === 'en' ? `${filteredCompanies.length} companies found` : `${filteredCompanies.length} ta kompaniya topildi`}
           </div>
         </div>
 
@@ -113,7 +113,7 @@ export default function CompaniesPage() {
 
       {filteredCompanies.length === 0 && (
         <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800">
-          <p className="text-slate-500">Hech qanday kompaniya topilmadi.</p>
+          <p className="text-slate-500">{language === 'ru' ? 'Компаний не найдено.' : language === 'en' ? 'No companies found.' : 'Hech qanday kompaniya topilmadi.'}</p>
         </div>
       )}
 

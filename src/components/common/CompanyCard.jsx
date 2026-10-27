@@ -73,7 +73,7 @@ export default function CompanyCard({ company }) {
           <span>•</span>
           <span className="flex items-center gap-1">
             <Users className="w-3.5 h-3.5 text-slate-400" />
-            {company.employees} xodim
+            {company.employees} {language === 'ru' ? 'сотрудников' : language === 'en' ? 'employees' : 'xodim'}
           </span>
         </div>
 
@@ -86,14 +86,14 @@ export default function CompanyCard({ company }) {
       {/* Footer with Open Jobs and Link */}
       <div className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
         <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300">
-          {openJobsCount} ochiq vakansiya
+          {openJobsCount} {language === 'ru' ? 'открытых вакансий' : language === 'en' ? 'open jobs' : 'ta ochiq vakansiya'}
         </span>
 
         <Link
           to={`/companies/${company.slug || company.id}`}
           className="inline-flex items-center gap-1 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 group/link"
         >
-          <span>Profil</span>
+          <span>{language === 'ru' ? 'Профиль' : language === 'en' ? 'Profile' : 'Profil'}</span>
           <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform" />
         </Link>
       </div>

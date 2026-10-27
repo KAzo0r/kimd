@@ -127,11 +127,11 @@ export default function EmployerDashboardPage() {
       {/* Top Banner with Employer Brand Info */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white p-2 shrink-0 flex items-center justify-center shadow-lg">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white dark:bg-slate-800 p-2 shrink-0 flex items-center justify-center shadow-lg border border-slate-700/50">
             {currentCompany.logo ? (
               <img src={currentCompany.logo} alt={currentCompany.name} className="w-full h-full object-contain rounded-xl" />
             ) : (
-              <Building2 className="w-8 h-8 text-blue-600" />
+              <Building2 className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             )}
           </div>
 
@@ -148,7 +148,7 @@ export default function EmployerDashboardPage() {
               {user?.name || "Sarvar Rustamov"} ({user?.title || "HR Director"})
             </p>
             <p className="text-xs text-slate-400">
-              {currentCompany.industryUz || currentCompany.industry} • {currentCompany.location}
+              {language === 'ru' ? (currentCompany.industryRu || currentCompany.industry) : language === 'en' ? (currentCompany.industryEn || currentCompany.industry) : (currentCompany.industryUz || currentCompany.industry)} • {currentCompany.location}
             </p>
           </div>
         </div>
@@ -157,15 +157,15 @@ export default function EmployerDashboardPage() {
         <div className="grid grid-cols-3 gap-4 border-t sm:border-t-0 sm:border-l border-slate-700 pt-4 sm:pt-0 sm:pl-8 text-center">
           <div>
             <div className="text-2xl font-black text-blue-400">{companyJobs.length}</div>
-            <div className="text-xs text-slate-400">Faol vakansiyalar</div>
+            <div className="text-xs text-slate-400">{language === 'ru' ? 'Активные вакансии' : language === 'en' ? 'Active vacancies' : 'Faol vakansiyalar'}</div>
           </div>
           <div>
             <div className="text-2xl font-black text-emerald-400">{totalApplicants}</div>
-            <div className="text-xs text-slate-400">Nomzodlar</div>
+            <div className="text-xs text-slate-400">{language === 'ru' ? 'Кандидаты' : language === 'en' ? 'Candidates' : 'Nomzodlar'}</div>
           </div>
           <div>
             <div className="text-2xl font-black text-amber-400">{totalViews}</div>
-            <div className="text-xs text-slate-400">Ko'rishlar</div>
+            <div className="text-xs text-slate-400">{language === 'ru' ? 'Просмотры' : language === 'en' ? 'Views' : "Ko'rishlar"}</div>
           </div>
         </div>
       </div>
@@ -182,7 +182,7 @@ export default function EmployerDashboardPage() {
           }`}
         >
           <Users className="w-4 h-4" />
-          <span>Nomzodlar va arizalar</span>
+          <span>{language === 'ru' ? 'Кандидаты и отклики' : language === 'en' ? 'Candidates & applications' : 'Nomzodlar va arizalar'}</span>
           <span className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] flex items-center justify-center font-bold">
             {companyApplications.length}
           </span>
@@ -197,7 +197,7 @@ export default function EmployerDashboardPage() {
           }`}
         >
           <PlusCircle className="w-4 h-4" />
-          <span>+ Yangi vakansiya</span>
+          <span>{language === 'ru' ? '+ Новая вакансия' : language === 'en' ? '+ New vacancy' : '+ Yangi vakansiya'}</span>
         </button>
 
         <button
@@ -209,7 +209,7 @@ export default function EmployerDashboardPage() {
           }`}
         >
           <Briefcase className="w-4 h-4" />
-          <span>Mening vakansiyalarim ({companyJobs.length})</span>
+          <span>{language === 'ru' ? 'Мои вакансии' : language === 'en' ? 'My vacancies' : 'Mening vakansiyalarim'} ({companyJobs.length})</span>
         </button>
 
       </div>

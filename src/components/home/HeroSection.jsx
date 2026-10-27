@@ -35,12 +35,12 @@ export default function HeroSection() {
   };
 
   const popularPills = [
-    { label: "React / Frontend", query: "React" },
-    { label: "Python & AI", query: "Python" },
-    { label: "Buxgalteriya", query: "Buxgalter" },
-    { label: "SMM & Marketing", query: "SMM" },
-    { label: "Masofaviy (Remote)", query: "formatRemote", isFormat: true },
-    { label: "Sotuvchi-maslahatchi", query: "sotuvchi" }
+    { labelUz: "React / Frontend", labelRu: "React / Frontend", labelEn: "React / Frontend", query: "React" },
+    { labelUz: "Python & AI", labelRu: "Python & AI", labelEn: "Python & AI", query: "Python" },
+    { labelUz: "Buxgalteriya", labelRu: "Бухгалтерия", labelEn: "Accounting", query: "Buxgalter" },
+    { labelUz: "SMM & Marketing", labelRu: "SMM & Маркетинг", labelEn: "SMM & Marketing", query: "SMM" },
+    { labelUz: "Masofaviy (Remote)", labelRu: "Удаленная работа", labelEn: "Remote", query: "formatRemote", isFormat: true },
+    { labelUz: "Sotuvchi-maslahatchi", labelRu: "Продавец-консультант", labelEn: "Sales Consultant", query: "sotuvchi" }
   ];
 
   return (
@@ -57,7 +57,7 @@ export default function HeroSection() {
         {/* Top Mini Badge */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100/80 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800 text-xs font-semibold animate-fade-in shadow-sm">
           <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-          <span>O'zbekistonning #1 zamonaviy ish qidirish portali</span>
+          <span>{language === 'ru' ? 'Ведущий современный портал поиска работы в Узбекистане' : language === 'en' ? "#1 Modern Job Portal in Uzbekistan" : "O'zbekistonning #1 zamonaviy ish qidirish portali"}</span>
         </div>
 
         {/* Hero Title & Subtitle */}
@@ -125,7 +125,7 @@ export default function HeroSection() {
                 onClick={() => pill.isFormat ? handlePillClick(pill.query, 'format') : handlePillClick(pill.query, 'query')}
                 className="px-3 py-1 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors shadow-sm"
               >
-                {pill.label}
+                {language === 'ru' ? pill.labelRu : language === 'en' ? pill.labelEn : pill.labelUz}
               </button>
             ))}
           </div>

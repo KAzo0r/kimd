@@ -30,7 +30,7 @@ function ScrollToTop() {
 }
 
 export default function App() {
-  const { theme } = useThemeStore();
+  const { theme, language } = useThemeStore();
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -38,7 +38,8 @@ export default function App() {
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, [theme]);
+    document.documentElement.setAttribute('lang', language || 'uz');
+  }, [theme, language]);
 
   return (
     <BrowserRouter>

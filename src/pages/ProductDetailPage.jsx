@@ -297,7 +297,7 @@ export default function ProductDetailPage() {
                 </div>
 
                 <span className="text-xs text-slate-400">
-                  Jami: <b>{((product.price) * quantity).toLocaleString()} {t.som}</b>
+                  {language === 'ru' ? 'Итого:' : language === 'en' ? 'Total:' : 'Jami:'} <b>{((product.price) * quantity).toLocaleString()} {t.som}</b>
                 </span>
               </div>
             </div>
@@ -342,15 +342,15 @@ export default function ProductDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500">
               <div className="flex items-center gap-2">
                 <Truck className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>1 kunda yetkazish</span>
+                <span>{language === 'ru' ? 'Доставка за 1 день' : language === 'en' ? '1 day delivery' : '1 kunda yetkazish'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>12 oy rasmiy kafolat</span>
+                <span>{language === 'ru' ? '12 мес. гарантии' : language === 'en' ? '12 months warranty' : '12 oy rasmiy kafolat'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <RotateCcw className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>14 kun qaytarish</span>
+                <span>{language === 'ru' ? 'Возврат за 14 дней' : language === 'en' ? '14 days return' : '14 kun qaytarish'}</span>
               </div>
             </div>
 

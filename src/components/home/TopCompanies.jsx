@@ -29,7 +29,7 @@ export default function TopCompanies() {
           to="/companies"
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline"
         >
-          <span>Barcha {companies.length} ta kompaniya</span>
+          <span>{language === 'ru' ? `Все ${companies.length} компаний` : language === 'en' ? `All ${companies.length} companies` : `Barcha ${companies.length} ta kompaniya`}</span>
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>

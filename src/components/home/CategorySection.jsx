@@ -8,12 +8,13 @@ export default function CategorySection() {
   const { language } = useThemeStore();
   const t = translations[language] || translations.uz;
 
-  const categories = [
+    const modelSuffix = language === 'ru' ? 'моделей' : language === 'en' ? 'models' : 'model';
+    const categories = [
     {
       id: 'smartphones',
       name: t.catSmartphones,
       icon: Smartphone,
-      count: '14+ model',
+      count: `14+ ${modelSuffix}`,
       image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?q=80&w=400&auto=format&fit=crop',
       color: 'from-blue-600 to-indigo-700'
     },
@@ -21,7 +22,7 @@ export default function CategorySection() {
       id: 'laptops',
       name: t.catLaptops,
       icon: Laptop,
-      count: '10+ model',
+      count: `10+ ${modelSuffix}`,
       image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=400&auto=format&fit=crop',
       color: 'from-amber-500 to-orange-600'
     },
@@ -29,7 +30,7 @@ export default function CategorySection() {
       id: 'audio',
       name: t.catAudio,
       icon: Headphones,
-      count: '18+ model',
+      count: `18+ ${modelSuffix}`,
       image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=400&auto=format&fit=crop',
       color: 'from-emerald-500 to-teal-700'
     },
@@ -37,7 +38,7 @@ export default function CategorySection() {
       id: 'wearables',
       name: t.catWearables,
       icon: Watch,
-      count: '8+ model',
+      count: `8+ ${modelSuffix}`,
       image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=400&auto=format&fit=crop',
       color: 'from-purple-600 to-pink-600'
     },
@@ -45,7 +46,7 @@ export default function CategorySection() {
       id: 'accessories',
       name: t.catAccessories,
       icon: BatteryCharging,
-      count: '25+ model',
+      count: `25+ ${modelSuffix}`,
       image: 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?q=80&w=400&auto=format&fit=crop',
       color: 'from-rose-500 to-red-600'
     }
@@ -101,7 +102,7 @@ export default function CategorySection() {
 
                 <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
                   <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                    <span>Ko'rish</span>
+                    <span>{language === 'ru' ? 'Смотреть' : language === 'en' ? 'View' : "Ko'rish"}</span>
                     <ArrowRight className="w-3 h-3" />
                   </span>
                 </div>

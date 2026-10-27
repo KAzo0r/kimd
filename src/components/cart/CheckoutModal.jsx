@@ -159,7 +159,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
                 {completedOrder ? t.orderSuccessTitle : t.checkoutTitle}
               </h3>
               <p className="text-xs text-slate-400">
-                {completedOrder ? `ID: #${completedOrder.id}` : `${items.length} ta mahsulot`}
+                {completedOrder ? `ID: #${completedOrder.id}` : `${items.length} ${language === 'ru' ? 'товаров' : language === 'en' ? 'items' : 'ta mahsulot'}`}
               </p>
             </div>
           </div>
@@ -184,31 +184,31 @@ export default function CheckoutModal({ isOpen, onClose }) {
 
               <div className="space-y-2 max-w-md mx-auto">
                 <h4 className="text-2xl font-black text-slate-900 dark:text-white">
-                  Rahmat, {completedOrder.customerName}!
+                  {language === 'ru' ? `Спасибо, ${completedOrder.customerName}!` : language === 'en' ? `Thank you, ${completedOrder.customerName}!` : `Rahmat, ${completedOrder.customerName}!`}
                 </h4>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
-                  Sizning buyurtmangiz muvaffaqiyatli qabul qilindi.
+                  {language === 'ru' ? 'Ваш заказ успешно принят в обработку.' : language === 'en' ? 'Your order has been successfully placed.' : 'Sizning buyurtmangiz muvaffaqiyatli qabul qilindi.'}
                 </p>
               </div>
 
               {/* Order Info Card */}
               <div className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-4 text-left border border-slate-200 dark:border-slate-700/60 space-y-2 text-xs">
                 <div className="flex justify-between py-1 border-b border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-400">Buyurtma raqami:</span>
+                  <span className="text-slate-400">{language === 'ru' ? 'Номер заказа:' : language === 'en' ? 'Order ID:' : 'Buyurtma raqami:'}</span>
                   <span className="font-bold text-slate-900 dark:text-white">#{completedOrder.id}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-400">Telefon:</span>
+                  <span className="text-slate-400">{language === 'ru' ? 'Телефон:' : language === 'en' ? 'Phone:' : 'Telefon:'}</span>
                   <span className="font-bold text-slate-900 dark:text-white">{completedOrder.customerPhone}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-400">Yetkazish manzili:</span>
+                  <span className="text-slate-400">{language === 'ru' ? 'Адрес доставки:' : language === 'en' ? 'Delivery address:' : 'Yetkazish manzili:'}</span>
                   <span className="font-bold text-slate-900 dark:text-white">{completedOrder.deliveryRegion}, {completedOrder.deliveryAddress}</span>
                 </div>
                 <div className="flex justify-between py-1">
-                  <span className="text-slate-400">Jami to'lov:</span>
+                  <span className="text-slate-400">{language === 'ru' ? 'Итого к оплате:' : language === 'en' ? 'Total amount:' : "Jami to'lov:"}</span>
                   <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm">
-                    {(completedOrder.total).toLocaleString()} so'm
+                    {(completedOrder.total).toLocaleString()} {t.som}
                   </span>
                 </div>
               </div>
@@ -219,10 +219,10 @@ export default function CheckoutModal({ isOpen, onClose }) {
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                       <CheckCircle className="w-4 h-4 text-emerald-500" />
-                      <span>Tasdiqlangan to'lov cheki fotosurati:</span>
+                      <span>{language === 'ru' ? 'Прикрепленное фото чека:' : language === 'en' ? 'Attached receipt photo:' : "Tasdiqlangan to'lov cheki fotosurati:"}</span>
                     </span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-                      Biriktirildi
+                      {language === 'ru' ? 'Прикреплено' : language === 'en' ? 'Attached' : 'Biriktirildi'}
                     </span>
                   </div>
                   <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-48 w-full bg-slate-900">
@@ -242,10 +242,14 @@ export default function CheckoutModal({ isOpen, onClose }) {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-sky-900 dark:text-sky-200">
-                    Telegram xabarnomasi yuborildi
+                    {language === 'ru' ? 'Уведомление в Telegram отправлено' : language === 'en' ? 'Telegram notification sent' : 'Telegram xabarnomasi yuborildi'}
                   </p>
                   <p className="text-[11px] text-sky-700 dark:text-sky-300">
-                    Administratorga buyurtma to'liq ma'lumotlari jo'natildi. Operatorimiz tez orada bog'lanadi.
+                    {language === 'ru' 
+                      ? 'Данные заказа отправлены администратору. Наш менеджер скоро свяжется с вами.' 
+                      : language === 'en' 
+                      ? 'Order details sent to admin. Our manager will contact you shortly.' 
+                      : "Administratorga buyurtma to'liq ma'lumotlari jo'natildi. Operatorimiz tez orada bog'lanadi."}
                   </p>
                 </div>
               </div>
@@ -265,7 +269,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
               {/* Customer Contact */}
               <div className="space-y-4">
                 <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
-                  1. Aloqa ma'lumotlari
+                  1. {language === 'ru' ? 'Контактные данные' : language === 'en' ? 'Contact details' : "Aloqa ma'lumotlari"}
                 </h4>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -279,7 +283,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
                       value={formData.fullName}
                       onChange={handleInputChange}
                       required
-                      placeholder="Masalan: Alisher Usmonov"
+                      placeholder={language === 'ru' ? 'Например: Рустам Алимов' : language === 'en' ? 'E.g.: John Doe' : 'Masalan: Alisher Usmonov'}
                       className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm outline-none focus:border-emerald-500 text-slate-800 dark:text-slate-200"
                     />
                   </div>
@@ -329,7 +333,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
                         <span>{t.deliveryCourier}</span>
                       </div>
                       <p className="text-[11px] text-slate-400 mt-0.5">
-                        {deliveryFee > 0 ? `${(deliveryFee).toLocaleString()} so'm` : t.free}
+                        {deliveryFee > 0 ? `${(deliveryFee).toLocaleString()} ${t.som}` : t.free}
                       </p>
                     </div>
                   </label>
@@ -355,7 +359,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
                         <span>{t.deliveryPickup}</span>
                       </div>
                       <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">
-                        {t.free} (Amir Temur shoh ko'chasi 45)
+                        {language === 'ru' ? 'Бесплатно (ул. Амира Темура 45)' : language === 'en' ? 'Free (45 Amir Temur Ave)' : `${t.free} (Amir Temur shoh ko'chasi 45)`}
                       </p>
                     </div>
                   </label>
@@ -399,7 +403,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
                         value={formData.address}
                         onChange={handleInputChange}
                         required={formData.deliveryType === 'courier'}
-                        placeholder="Ko'cha nomi, uy va kvartira raqami"
+                        placeholder={language === 'ru' ? 'Улица, дом, квартира' : language === 'en' ? 'Street, building, apartment' : "Ko'cha nomi, uy va kvartira raqami"}
                         className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm outline-none focus:border-emerald-500 text-slate-800 dark:text-slate-200"
                       />
                     </div>
@@ -418,7 +422,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
                     { id: 'payme', label: 'Payme', color: 'text-sky-500' },
                     { id: 'click', label: 'Click', color: 'text-blue-500' },
                     { id: 'uzum', label: 'Uzum Bank', color: 'text-purple-500' },
-                    { id: 'cash', label: 'Naqd pul', color: 'text-emerald-500' }
+                    { id: 'cash', label: language === 'ru' ? 'Наличные' : language === 'en' ? 'Cash' : 'Naqd pul', color: 'text-emerald-500' }
                   ].map((pay) => (
                     <label
                       key={pay.id}
@@ -454,13 +458,13 @@ export default function CheckoutModal({ isOpen, onClose }) {
                     </div>
                     <div>
                       <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        <span>4. To'lov cheki yoki fotosurati</span>
+                        <span>4. {language === 'ru' ? 'Фото чека или подтверждение' : language === 'en' ? 'Payment receipt / photo' : "To'lov cheki yoki fotosurati"}</span>
                         <span className="px-2 py-0.5 rounded text-[10px] font-black bg-rose-600 text-white uppercase tracking-wider shadow-sm">
-                          Majburiy *
+                          {language === 'ru' ? 'Обязательно *' : language === 'en' ? 'Required *' : 'Majburiy *'}
                         </span>
                       </h4>
                       <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
-                        Xaridni ro'yxatga olish uchun to'lov cheki skrinshoti yoki tovar fotosuratini yuklang
+                        {language === 'ru' ? 'Для подтверждения заказа прикрепите чек оплаты или фото товара' : language === 'en' ? 'Attach payment receipt screenshot or product photo to confirm order' : "Xaridni ro'yxatga olish uchun to'lov cheki skrinshoti yoki tovar fotosuratini yuklang"}
                       </p>
                     </div>
                   </div>
@@ -476,14 +480,14 @@ export default function CheckoutModal({ isOpen, onClose }) {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 flex items-end justify-between p-3.5">
                       <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow">
                         <CheckCircle className="w-4 h-4" />
-                        <span>Foto muvaffaqiyatli biriktirildi</span>
+                        <span>{language === 'ru' ? 'Фото успешно прикреплено' : language === 'en' ? 'Photo attached successfully' : 'Foto muvaffaqiyatli biriktirildi'}</span>
                       </span>
                       <button
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, receiptPhoto: '' }))}
                         className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-all shadow-md active:scale-95"
                       >
-                        O'chirish / Boshqasini yuklash
+                        {language === 'ru' ? 'Удалить / Заменить' : language === 'en' ? 'Remove / Change' : "O'chirish / Boshqasini yuklash"}
                       </button>
                     </div>
                   </div>
@@ -494,10 +498,10 @@ export default function CheckoutModal({ isOpen, onClose }) {
                         <Upload className="w-6 h-6" />
                       </div>
                       <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                        Qurilmangizdan rasm tanlang (Kamera / Galereya)
+                        {language === 'ru' ? 'Выберите фото с устройства (Камера / Галерея)' : language === 'en' ? 'Choose photo from device (Camera / Gallery)' : "Qurilmangizdan rasm tanlang (Kamera / Galereya)"}
                       </span>
                       <span className="text-[10px] text-slate-400 mt-0.5">
-                        PNG, JPG, WEBP, JPEG qabul qilinadi
+                        {language === 'ru' ? 'Форматы: PNG, JPG, WEBP, JPEG' : language === 'en' ? 'Accepts PNG, JPG, WEBP, JPEG' : 'PNG, JPG, WEBP, JPEG qabul qilinadi'}
                       </span>
                       <input
                         type="file"
@@ -520,7 +524,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
                     {/* Quick 1-click test receipt presets */}
                     <div className="bg-white/80 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700/80 space-y-2">
                       <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 block">
-                        💡 Test uchun tayyor namuna cheklar:
+                        {language === 'ru' ? '💡 Тестовые образцы чеков:' : language === 'en' ? '💡 Sample receipts for testing:' : "💡 Test uchun tayyor namuna cheklar:"}
                       </span>
                       <div className="flex flex-wrap gap-2">
                         <button
@@ -534,7 +538,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
                           }}
                           className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-sky-100 hover:bg-sky-200 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 transition-colors"
                         >
-                          📄 Payme Cheki
+                          {language === 'ru' ? '📄 Чек Payme' : language === 'en' ? '📄 Payme Receipt' : '📄 Payme Cheki'}
                         </button>
                         <button
                           type="button"
@@ -547,7 +551,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
                           }}
                           className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-purple-100 hover:bg-purple-200 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 transition-colors"
                         >
-                          📄 Click Cheki
+                          {language === 'ru' ? '📄 Чек Click' : language === 'en' ? '📄 Click Receipt' : '📄 Click Cheki'}
                         </button>
                         <button
                           type="button"
@@ -558,7 +562,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
                           }}
                           className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 transition-colors"
                         >
-                          📦 Mahsulot fotosurati
+                          {language === 'ru' ? '📦 Фото товара' : language === 'en' ? '📦 Product photo' : '📦 Mahsulot fotosurati'}
                         </button>
                       </div>
                     </div>
@@ -583,7 +587,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
                   value={formData.notes}
                   onChange={handleInputChange}
                   rows={2}
-                  placeholder="Kuryer uchun izoh yoki qo'ng'iroq vaqti..."
+                  placeholder={language === 'ru' ? 'Комментарий для курьера или время доставки...' : language === 'en' ? 'Courier instructions or delivery time...' : "Kuryer uchun izoh yoki qo'ng'iroq vaqti..."}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm outline-none focus:border-emerald-500 text-slate-800 dark:text-slate-200"
                 />
               </div>
@@ -592,25 +596,25 @@ export default function CheckoutModal({ isOpen, onClose }) {
               <div className="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-4 space-y-2 border border-slate-200 dark:border-slate-700 text-xs">
                 <div className="flex justify-between">
                   <span className="text-slate-500">{t.subtotal}</span>
-                  <span className="font-bold text-slate-900 dark:text-white">{(subtotal).toLocaleString()} so'm</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{(subtotal).toLocaleString()} {t.som}</span>
                 </div>
                 {discountAmount > 0 && (
                   <div className="flex justify-between text-red-500 font-semibold">
                     <span>{t.discount}</span>
-                    <span>-{(discountAmount).toLocaleString()} so'm</span>
+                    <span>-{(discountAmount).toLocaleString()} {t.som}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span className="text-slate-500">{t.shipping}</span>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                    {formData.deliveryType === 'pickup' || deliveryFee === 0 ? t.free : `${(deliveryFee).toLocaleString()} so'm`}
+                    {formData.deliveryType === 'pickup' || deliveryFee === 0 ? t.free : `${(deliveryFee).toLocaleString()} ${t.som}`}
                   </span>
                 </div>
                 <div className="h-px bg-slate-200 dark:bg-slate-700 my-1" />
                 <div className="flex justify-between text-sm font-black text-slate-900 dark:text-white">
                   <span>{t.total}</span>
                   <span className="text-emerald-600 dark:text-emerald-400">
-                    {(formData.deliveryType === 'pickup' ? Math.max(0, subtotal - discountAmount) : total).toLocaleString()} so'm
+                    {(formData.deliveryType === 'pickup' ? Math.max(0, subtotal - discountAmount) : total).toLocaleString()} {t.som}
                   </span>
                 </div>
               </div>
@@ -622,7 +626,7 @@ export default function CheckoutModal({ isOpen, onClose }) {
                 className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-sm shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
               >
                 {loading ? (
-                  <span>Rasmiylashtirilmoqda...</span>
+                  <span>{language === 'ru' ? 'Оформление заказа...' : language === 'en' ? 'Processing order...' : 'Rasmiylashtirilmoqda...'}</span>
                 ) : (
                   <>
                     <span>{t.confirmOrder}</span>

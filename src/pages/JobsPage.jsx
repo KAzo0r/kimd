@@ -163,7 +163,9 @@ export default function JobsPage() {
         {/* Active Filter Chips */}
         {activeFiltersCount > 0 && (
           <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
-            <span className="text-slate-400 font-medium">Faol filtrlar:</span>
+            <span className="text-slate-400 font-medium">
+              {language === 'ru' ? 'Активные фильтры:' : language === 'en' ? 'Active filters:' : 'Faol filtrlar:'}
+            </span>
             
             {filters.query && (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
@@ -185,7 +187,7 @@ export default function JobsPage() {
 
             {filters.category && (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                <span>Kategoriya: {filters.category}</span>
+                <span>{language === 'ru' ? 'Категория' : language === 'en' ? 'Category' : 'Kategoriya'}: {filters.category}</span>
                 <button onClick={() => setFilters({ category: "" })} className="hover:text-rose-500">
                   <X className="w-3 h-3" />
                 </button>
@@ -194,7 +196,7 @@ export default function JobsPage() {
 
             {filters.format && (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                <span>Format</span>
+                <span>{language === 'ru' ? 'Формат' : language === 'en' ? 'Format' : 'Format'}: {filters.format}</span>
                 <button onClick={() => setFilters({ format: "" })} className="hover:text-rose-500">
                   <X className="w-3 h-3" />
                 </button>
@@ -279,10 +281,14 @@ export default function JobsPage() {
                 <Search className="w-8 h-8" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                Hech qanday vakansiya topilmadi
+                {language === 'ru' ? 'Вакансий не найдено' : language === 'en' ? 'No vacancies found' : 'Hech qanday vakansiya topilmadi'}
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
-                Tanlangan filtrlar yoki qidiruv so'zi bo'yicha ma'lumot topilmadi. Filtrlarni tozalab ko'ring yoki boshqa so'z bilan izlang.
+                {language === 'ru' 
+                  ? 'По выбранным фильтрам или поисковому запросу ничего не найдено. Попробуйте сбросить фильтры или изменить запрос.' 
+                  : language === 'en' 
+                  ? 'No vacancies found matching your filters or search query. Try clearing filters or searching for something else.' 
+                  : "Tanlangan filtrlar yoki qidiruv so'zi bo'yicha ma'lumot topilmadi. Filtrlarni tozalab ko'ring yoki boshqa so'z bilan izlang."}
               </p>
               <div>
                 <button
@@ -318,7 +324,11 @@ export default function JobsPage() {
                     onClick={() => setVisibleCount(prev => prev + 12)}
                     className="px-8 py-3 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm font-bold text-slate-900 dark:text-white shadow-sm transition-all"
                   >
-                    Yana ko'proq vakansiyalarni yuklash ({filteredJobs.length - visibleCount} ta qoldi)
+                    {language === 'ru'
+                      ? `Загрузить еще вакансии (${filteredJobs.length - visibleCount} осталось)`
+                      : language === 'en'
+                      ? `Load more vacancies (${filteredJobs.length - visibleCount} remaining)`
+                      : `Yana ko'proq vakansiyalarni yuklash (${filteredJobs.length - visibleCount} ta qoldi)`}
                   </button>
                 </div>
               )}

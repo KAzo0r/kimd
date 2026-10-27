@@ -26,10 +26,10 @@ export default function FeaturedJobs() {
 
   const tabs = [
     { id: 'all', label: t.all },
-    { id: 'it', label: "IT & Dasturlash" },
-    { id: 'finance', label: "Moliya & Bank" },
-    { id: 'marketing', label: "Marketing & Savdo" },
-    { id: 'remote', label: "Masofaviy (Remote)" },
+    { id: 'it', label: language === 'ru' ? "IT и разработка" : language === 'en' ? "IT & Software" : "IT & Dasturlash" },
+    { id: 'finance', label: language === 'ru' ? "Финансы и банки" : language === 'en' ? "Finance & Banking" : "Moliya & Bank" },
+    { id: 'marketing', label: language === 'ru' ? "Маркетинг и продажи" : language === 'en' ? "Marketing & Sales" : "Marketing & Savdo" },
+    { id: 'remote', label: language === 'ru' ? "Удаленная работа" : language === 'en' ? "Remote" : "Masofaviy (Remote)" },
   ];
 
   return (
@@ -83,7 +83,7 @@ export default function FeaturedJobs() {
             to="/jobs"
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-900 dark:text-white shadow-md hover:shadow-lg transition-all"
           >
-            <span>Barcha {jobs.length} ta vakansiyani ko'rish</span>
+            <span>{language === 'ru' ? `Смотреть все ${jobs.length} вакансий` : language === 'en' ? `View all ${jobs.length} jobs` : `Barcha ${jobs.length} ta vakansiyani ko'rish`}</span>
             <ArrowRight className="w-4 h-4 text-blue-600" />
           </Link>
         </div>

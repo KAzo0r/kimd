@@ -23,7 +23,7 @@ export default function FavoritesPage() {
               <span>{t.favoritesTitle}</span>
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              {favorites.length} ta saqlangan mahsulot
+              {favorites.length} {language === 'ru' ? 'сохраненных товаров' : language === 'en' ? 'saved items' : 'ta saqlangan mahsulot'}
             </p>
           </div>
 

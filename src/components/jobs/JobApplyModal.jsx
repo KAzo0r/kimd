@@ -13,9 +13,13 @@ export default function JobApplyModal({ job, isOpen, onClose }) {
   const { resume, applyToJob } = useJobStore();
   const t = translations[language] || translations.uz;
 
-  const [coverLetter, setCoverLetter] = useState(
-    "Assalomu alaykum! Ushbu vakansiya bo'yicha talablar mening ko'nikmalarimga mos keladi. Sizning jamoangizda yangi marralarni zabt etishga tayyorman."
-  );
+  const defaultCoverLetter = language === 'ru'
+    ? 'Здравствуйте! Требования по данной вакансии соответствуют моим навыкам. Буду рад присоединиться к вашей команде.'
+    : language === 'en'
+    ? 'Hello! The requirements for this position match my skills. I would be thrilled to join your team.'
+    : "Assalomu alaykum! Ushbu vakansiya bo'yicha talablar mening ko'nikmalarimga mos keladi. Sizning jamoangizda yangi marralarni zabt etishga tayyorman.";
+
+  const [coverLetter, setCoverLetter] = useState(defaultCoverLetter);
   const [applicantName, setApplicantName] = useState(user?.name || resume?.fullName || "Javohir Karimov");
   const [applicantEmail, setApplicantEmail] = useState(user?.email || resume?.email || "javohir@ishtop.uz");
   const [applicantPhone, setApplicantPhone] = useState(user?.phone || resume?.phone || "+998 90 123 45 67");
@@ -112,9 +116,9 @@ export default function JobApplyModal({ job, isOpen, onClose }) {
             </p>
 
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-left text-xs space-y-1.5 text-slate-600 dark:text-slate-300">
-              <p><span className="font-semibold text-slate-900 dark:text-white">Vakansiya:</span> {job.title}</p>
-              <p><span className="font-semibold text-slate-900 dark:text-white">Kompaniya:</span> {job.companyName}</p>
-              <p><span className="font-semibold text-slate-900 dark:text-white">Ariza beruvchi:</span> {applicantName} ({applicantPhone})</p>
+              <p><span className="font-semibold text-slate-900 dark:text-white">{language === 'ru' ? 'Вакансия:' : language === 'en' ? 'Vacancy:' : 'Vakansiya:'}</span> {job.title}</p>
+              <p><span className="font-semibold text-slate-900 dark:text-white">{language === 'ru' ? 'Компания:' : language === 'en' ? 'Company:' : 'Kompaniya:'}</span> {job.companyName}</p>
+              <p><span className="font-semibold text-slate-900 dark:text-white">{language === 'ru' ? 'Соискатель:' : language === 'en' ? 'Applicant:' : 'Ariza beruvchi:'}</span> {applicantName} ({applicantPhone})</p>
             </div>
 
             <div className="pt-2">
@@ -122,7 +126,7 @@ export default function JobApplyModal({ job, isOpen, onClose }) {
                 onClick={handleModalClose}
                 className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition-colors shadow-md shadow-blue-600/20"
               >
-                Tushundim, rahmat!
+                {language === 'ru' ? 'Понятно, спасибо!' : language === 'en' ? 'Understood, thank you!' : 'Tushundim, rahmat!'}
               </button>
             </div>
           </div>
@@ -222,15 +226,15 @@ export default function JobApplyModal({ job, isOpen, onClose }) {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-slate-900 dark:text-white">
-                      {resume?.profession || "Frontend Developer"} rezyumesi
+                      {resume?.profession || "Frontend Developer"} {language === 'ru' ? 'резюме' : language === 'en' ? 'resume' : 'rezyumesi'}
                     </p>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                      IshTop.uz profili orqali avtomatik biriktiriladi
+                      {language === 'ru' ? 'Автоматически прикреплено из профиля' : language === 'en' ? 'Automatically attached from profile' : 'IshTop.uz profili orqali avtomatik biriktiriladi'}
                     </p>
                   </div>
                 </div>
                 <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md">
-                  Tayyor
+                  {language === 'ru' ? 'Готово' : language === 'en' ? 'Ready' : 'Tayyor'}
                 </span>
               </div>
 
@@ -256,7 +260,7 @@ export default function JobApplyModal({ job, isOpen, onClose }) {
                   className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm transition-all shadow-md shadow-blue-600/20 hover:scale-[1.01] disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
-                  <span>{isSubmitting ? "Yuborilmoqda..." : t.sendApplication}</span>
+                  <span>{isSubmitting ? (language === 'ru' ? 'Отправка...' : language === 'en' ? 'Sending...' : 'Yuborilmoqda...') : t.sendApplication}</span>
                 </button>
               </div>
 

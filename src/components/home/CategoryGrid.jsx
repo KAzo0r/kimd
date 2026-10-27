@@ -53,7 +53,7 @@ export default function CategoryGrid() {
           to="/jobs"
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline"
         >
-          <span>Barcha vakansiyalar</span>
+          <span>{t.allVacancies}</span>
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
@@ -81,7 +81,7 @@ export default function CategoryGrid() {
                   {name}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  {liveCount} {t.resultsFound.split(' ')[1] || 'vakansiya'}
+                  {liveCount} {language === 'ru' ? 'вакансий' : language === 'en' ? 'jobs' : 'vakansiya'}
                 </p>
               </div>
             </Link>

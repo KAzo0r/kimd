@@ -24,12 +24,12 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-sm">
-              {t.slogan}. O'zbekistonning barcha viloyatlarida munosib ish va iqtidorli kadrlarni birlashtiruvchi zamonaviy texnologik ekotizim.
+              {t.slogan}. {language === 'ru' ? 'Современная технологическая экосистема, объединяющая достойную работу и талантливых специалистов.' : language === 'en' ? 'A modern ecosystem connecting top opportunities and talent across Uzbekistan.' : "O'zbekistonning barcha viloyatlarida munosib ish va iqtidorli kadrlarni birlashtiruvchi zamonaviy texnologik ekotizim."}
             </p>
             <div className="flex items-center gap-3 pt-2">
               <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-3 py-1.5 rounded-lg">
                 <Shield className="w-4 h-4 text-emerald-500" />
-                <span>100% Tasdiqlangan vakansiyalar</span>
+                <span>{language === 'ru' ? '100% проверенные вакансии' : language === 'en' ? '100% Verified Vacancies' : '100% Tasdiqlangan vakansiyalar'}</span>
               </div>
             </div>
           </div>

@@ -28,11 +28,11 @@ export default function CtaBanners() {
               <div className="flex flex-col gap-2 pt-2 text-xs text-blue-100">
                 <span className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-                  <span>Qulay PDF rezyume yuklab olish formati</span>
+                  <span>{language === 'ru' ? 'Удобное скачивание резюме в формате PDF' : language === 'en' ? 'Convenient PDF resume export' : 'Qulay PDF rezyume yuklab olish formati'}</span>
                 </span>
                 <span className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-                  <span>Arizalar holatini onlayn kuzatish</span>
+                  <span>{language === 'ru' ? 'Прозрачное онлайн-отслеживание откликов' : language === 'en' ? 'Live online application status tracking' : 'Arizalar holatini onlayn kuzatish'}</span>
                 </span>
               </div>
             </div>
@@ -63,11 +63,11 @@ export default function CtaBanners() {
               <div className="flex flex-col gap-2 pt-2 text-xs text-slate-300">
                 <span className="flex items-center gap-2">
                   <Zap className="w-4 h-4 text-amber-400" />
-                  <span>Vakansiyangiz 15 daqiqa ichida faollashadi</span>
+                  <span>{language === 'ru' ? 'Публикация вакансии за считанные минуты' : language === 'en' ? 'Job published and active in minutes' : 'Vakansiyangiz 15 daqiqa ichida faollashadi'}</span>
                 </span>
                 <span className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>Tasdiqlangan ish beruvchi unvoni</span>
+                  <span>{language === 'ru' ? 'Статус проверенного работодателя' : language === 'en' ? 'Verified company & employer status' : 'Tasdiqlangan ish beruvchi unvoni'}</span>
                 </span>
               </div>
             </div>
