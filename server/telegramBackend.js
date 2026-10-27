@@ -279,6 +279,22 @@ ${itemsList || '1 dona tovar'}
       return sendTelegramPhoto({ token, chatId, photoUrl, caption });
     }
 
+    case 'auth_code':
+    case 'send_auth_code': {
+      const phone = payload.phone || '-';
+      const code = payload.code || '0000';
+      const text = `
+🔐 <b>ISHTOP.UZ TASDIQLASH KODI</b>
+━━━━━━━━━━━━━━━━━━━━
+📱 <b>Telefon:</b> <code>${phone}</code>
+🔑 <b>KOD:</b> <b><code>${code}</code></b>
+━━━━━━━━━━━━━━━━━━━━
+ℹ️ <i>Ushbu bir martalik kodni saytga kiritib ro'yxatdan o'tish yoki kirishni tasdiqlang.</i>
+🕒 <b>Vaqt:</b> ${now}
+`.trim();
+      return sendTelegramText({ token, chatId, text });
+    }
+
     default:
       return { ok: false, error: `Unknown action: ${action}` };
   }

