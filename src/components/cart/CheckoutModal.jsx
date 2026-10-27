@@ -118,6 +118,27 @@ export default function CheckoutModal({ isOpen, onClose }) {
       // 5. Send Telegram notification (with mandatory photo)
       await notifyOrder(newOrder);
 
+      // 5.1 Sync order to Supabase database
+      try {
+        import('../../utils/supabaseClient').then(({ saveOrderToSupabase }) => {
+          saveOrderToSupabase({
+            order_id: newOrder.id,
+            customer_name: formData.fullName,
+            customer_phone: formData.phoneNumber,
+            delivery_region: formData.region,
+            delivery_address: formData.address,
+            delivery_type: formData.deliveryType,
+            payment_method: formData.paymentMethod,
+            receipt_photo: formData.receiptPhoto,
+            total_amount: newOrder.total,
+            items: orderItems,
+            created_at: new Date().toISOString()
+          });
+        });
+      } catch (err) {
+        // silent fallback
+      }
+
       // 6. Confetti effect
       try {
         confetti({

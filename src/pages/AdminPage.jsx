@@ -24,7 +24,9 @@ import {
   Camera,
   CheckCircle,
   Clock,
-  Package
+  Package,
+  Database,
+  Key
 } from 'lucide-react';
 import { useThemeStore } from '../store/useThemeStore';
 import { useJobStore } from '../store/useJobStore';
@@ -32,6 +34,7 @@ import { useOrderStore } from '../store/useOrderStore';
 import { formatSalary } from '../utils/helpers';
 import { translations } from '../constants/translations';
 import { checkBotConnection, sendTestTextMessage, sendTestPhotoMessage, notifyNewOrder } from '../utils/telegramService';
+import { isSupabaseConfigured, supabase } from '../utils/supabaseClient';
 
 export default function AdminPage() {
   const { language } = useThemeStore();
@@ -39,7 +42,7 @@ export default function AdminPage() {
   const { orders, updateOrderStatus } = useOrderStore();
   const t = translations[language] || translations.uz;
 
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'jobs' | 'companies' | 'users' | 'orders' | 'telegram'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'jobs' | 'companies' | 'users' | 'orders' | 'telegram' | 'supabase'
   const [jobSearch, setJobSearch] = useState("");
   const [orderSearch, setOrderSearch] = useState("");
   const [previewPhoto, setPreviewPhoto] = useState(null);
@@ -185,6 +188,19 @@ export default function AdminPage() {
           <Bot className="w-4 h-4" />
           <span>Telegram Bot (@apexishqidirish_bot)</span>
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+        </button>
+
+        <button
+          onClick={() => setActiveTab('supabase')}
+          className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+            activeTab === 'supabase'
+              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+        >
+          <Database className="w-4 h-4 text-emerald-400" />
+          <span>Supabase Baza</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400" />
         </button>
       </div>
 
@@ -873,6 +889,116 @@ export default function AdminPage() {
         </div>
       )}
 
+      {/* TAB 7: Supabase Cloud Database Integration */}
+      {activeTab === 'supabase' && (
+        <div className="space-y-6 animate-fade-in">
+          
+          {/* Supabase Status Header */}
+          <div className="bg-gradient-to-r from-emerald-900 via-teal-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white border border-emerald-800/50 shadow-xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+                  <Database className="w-6 h-6" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold flex items-center gap-2">
+                    <span>Supabase PostgreSQL Integration</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      Kalitlar kiritildi
+                    </span>
+                  </h2>
+                  <p className="text-xs text-slate-300 mt-0.5">
+                    Bulutli ma'lumotlar bazasi, buyurtmalar va vakansiyalar arxivini boshqarish
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs font-semibold px-3.5 py-2 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>{isSupabaseConfigured() ? 'Ulangan (Online)' : 'URL kutilmoqda'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Keys Overview Card */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                <Key className="w-4 h-4 text-emerald-500" />
+                <span>Publishable API Key (Client)</span>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 font-mono text-xs text-slate-800 dark:text-slate-200 break-all border border-slate-200 dark:border-slate-700">
+                {import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ? "sb_publishable_•••••••• (Faol ulangan)" : "O'rnatilgan (.env)"}
+              </div>
+              <p className="text-[11px] text-slate-500">
+                Frontend (brauzer) orqali xavfsiz so'rovlar yuborish uchun ochiq kalit.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                <Key className="w-4 h-4 text-amber-500" />
+                <span>Secret API Key (Backend)</span>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 font-mono text-xs text-slate-800 dark:text-slate-200 break-all border border-slate-200 dark:border-slate-700">
+                sb_secret_••••••••••••••••••••••••••••••••
+              </div>
+              <p className="text-[11px] text-slate-500">
+                Maxfiy ma'muriy kalit. Server va Vercel Environment Variables orqali himoyalangan.
+              </p>
+            </div>
+          </div>
+
+          {/* Quick SQL Tables Setup */}
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-slate-900 dark:text-white text-base">
+                  Supabase Jadvallar Strukturasi (SQL Schema)
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Ushbu SQL kodini Supabase boshqaruv panelidagi <b>SQL Editor</b> bo'limiga kiritib <b>Run</b> tugmasini bosing:
+                </p>
+              </div>
+            </div>
+
+            <pre className="p-4 rounded-2xl bg-slate-950 text-emerald-400 text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800 max-h-72">
+{`-- 1. Buyurtmalar jadvali (Orders)
+CREATE TABLE IF NOT EXISTS orders (
+  id BIGSERIAL PRIMARY KEY,
+  order_id TEXT UNIQUE,
+  customer_name TEXT NOT NULL,
+  customer_phone TEXT NOT NULL,
+  delivery_region TEXT,
+  delivery_address TEXT,
+  delivery_type TEXT,
+  payment_method TEXT,
+  receipt_photo TEXT,
+  total_amount NUMERIC,
+  items JSONB,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 2. Ish arizalari jadvali (Applications)
+CREATE TABLE IF NOT EXISTS applications (
+  id BIGSERIAL PRIMARY KEY,
+  job_id TEXT,
+  job_title TEXT,
+  company_name TEXT,
+  applicant_name TEXT,
+  applicant_email TEXT,
+  applicant_phone TEXT,
+  applicant_city TEXT,
+  cover_letter TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);`}
+            </pre>
+          </div>
+
+        </div>
+      )}
+
     </div>
   );
 }
+

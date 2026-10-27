@@ -66,6 +66,25 @@ export default function JobApplyModal({ job, isOpen, onClose }) {
         console.warn('Telegram job notification deferred:', err);
       }
 
+      // Sync application to Supabase database
+      try {
+        import('../../utils/supabaseClient').then(({ saveApplicationToSupabase }) => {
+          saveApplicationToSupabase({
+            job_id: job.id,
+            job_title: job.title,
+            company_name: job.companyName,
+            applicant_name: applicantName,
+            applicant_email: applicantEmail,
+            applicant_phone: applicantPhone,
+            applicant_city: applicantCity,
+            cover_letter: coverLetter,
+            created_at: new Date().toISOString()
+          });
+        });
+      } catch (err) {
+        // silent fallback
+      }
+
       setIsSubmitting(false);
       setIsSubmitted(true);
 
