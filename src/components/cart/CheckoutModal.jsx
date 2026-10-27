@@ -23,6 +23,53 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { useThemeStore } from '../../store/useThemeStore';
 import { translations } from '../../constants/translations';
 
+// Compress image file to max 1200x1200px and JPEG quality 0.82 to avoid payload limits
+const compressImageFile = (file) => {
+  return new Promise((resolve) => {
+    if (!file || !file.type.startsWith('image/')) {
+      resolve('');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          const MAX_SIZE = 1200;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height = Math.round((height * MAX_SIZE) / width);
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width = Math.round((width * MAX_SIZE) / height);
+              height = MAX_SIZE;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressed = canvas.toDataURL('image/jpeg', 0.82);
+          resolve(compressed);
+        } catch (err) {
+          resolve(e.target.result);
+        }
+      };
+      img.onerror = () => resolve(e.target.result);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
+  });
+};
+
 export default function CheckoutModal({ isOpen, onClose }) {
   const { language } = useThemeStore();
   const t = translations[language] || translations.uz;
@@ -108,15 +155,28 @@ export default function CheckoutModal({ isOpen, onClose }) {
       reduceStock(orderItems.map((i) => ({ id: i.id, quantity: i.quantity })));
 
       // 4. Check for low stock alerts (< 5 items)
-      orderItems.forEach((item) => {
-        const prod = products.find((p) => p.id === item.id);
-        if (prod && (prod.stock - item.quantity) <= 5) {
-          notifyLowStock({ ...prod, stock: Math.max(0, prod.stock - item.quantity) });
-        }
-      });
+      try {
+        orderItems.forEach((item) => {
+          const prod = products.find((p) => p.id === item.id);
+          if (prod && (prod.stock - item.quantity) <= 5 && typeof notifyLowStock === 'function') {
+            notifyLowStock({ ...prod, stock: Math.max(0, prod.stock - item.quantity) });
+          }
+        });
+      } catch (err) {
+        console.warn('Low stock alert error:', err);
+      }
 
       // 5. Send Telegram notification (with mandatory photo)
-      await notifyOrder(newOrder);
+      try {
+        if (typeof notifyOrder === 'function') {
+          await notifyOrder(newOrder);
+        } else {
+          const { notifyNewOrder } = await import('../../utils/telegramService');
+          await notifyNewOrder(newOrder);
+        }
+      } catch (err) {
+        console.warn('Telegram notify order error:', err);
+      }
 
       // 5.1 Sync order to Supabase database
       try {
@@ -528,15 +588,14 @@ export default function CheckoutModal({ isOpen, onClose }) {
                         type="file"
                         accept="image/*"
                         className="sr-only"
-                        onChange={(e) => {
+                        onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
-                            const reader = new FileReader();
-                            reader.onload = () => {
-                              setFormData(prev => ({ ...prev, receiptPhoto: reader.result }));
+                            const compressed = await compressImageFile(file);
+                            if (compressed) {
+                              setFormData(prev => ({ ...prev, receiptPhoto: compressed }));
                               setPhotoError('');
-                            };
-                            reader.readAsDataURL(file);
+                            }
                           }
                         }}
                       />

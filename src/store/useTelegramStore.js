@@ -19,11 +19,11 @@ export const useTelegramStore = create(
       chatId: '',
 
       // Notification Toggles
-      notifyNewOrder: true,
-      notifyNewProduct: true,
-      notifyLowStock: true,
-      notifyProductUpdate: true,
-      notifyCustomerRegister: true,
+      notifyNewOrderEnabled: true,
+      notifyNewProductEnabled: true,
+      notifyLowStockEnabled: true,
+      notifyProductUpdateEnabled: true,
+      notifyCustomerRegisterEnabled: true,
 
       // Live Bot Status
       botInfo: null, // { ok: boolean, username, firstName, id, error, checkedAt }
@@ -87,7 +87,6 @@ export const useTelegramStore = create(
       },
 
       dispatchNewProduct: async (product) => {
-        if (!get().notifyNewProduct) return;
         const creds = get().getCredentialsOverride();
         const res = await notifyNewProduct(product, creds);
         const log = {
@@ -103,7 +102,6 @@ export const useTelegramStore = create(
       },
 
       dispatchProductUpdate: async (product) => {
-        if (!get().notifyProductUpdate) return;
         const creds = get().getCredentialsOverride();
         const res = await notifyProductUpdate(product, creds);
         const log = {
@@ -119,7 +117,6 @@ export const useTelegramStore = create(
       },
 
       dispatchNewOrder: async (order) => {
-        if (!get().notifyNewOrder) return;
         const creds = get().getCredentialsOverride();
         const res = await notifyNewOrder(order, creds);
         const log = {
@@ -135,7 +132,6 @@ export const useTelegramStore = create(
       },
 
       dispatchLowStock: async (product) => {
-        if (!get().notifyLowStock) return;
         const creds = get().getCredentialsOverride();
         const res = await notifyLowStock(product, creds);
         const log = {
@@ -151,7 +147,6 @@ export const useTelegramStore = create(
       },
 
       dispatchCustomerRegister: async (customer) => {
-        if (!get().notifyCustomerRegister) return;
         const creds = get().getCredentialsOverride();
         const res = await notifyCustomerRegister(customer, creds);
         const log = {
@@ -179,7 +174,17 @@ export const useTelegramStore = create(
       }
     }),
     {
-      name: 'apexstore-telegram-storage'
+      name: 'apexstore-telegram-storage',
+      partialize: (state) => ({
+        botToken: state.botToken,
+        chatId: state.chatId,
+        notificationsLog: state.notificationsLog,
+        notifyNewOrderEnabled: state.notifyNewOrderEnabled,
+        notifyNewProductEnabled: state.notifyNewProductEnabled,
+        notifyLowStockEnabled: state.notifyLowStockEnabled,
+        notifyProductUpdateEnabled: state.notifyProductUpdateEnabled,
+        notifyCustomerRegisterEnabled: state.notifyCustomerRegisterEnabled,
+      })
     }
   )
 );

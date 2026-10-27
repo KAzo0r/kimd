@@ -29,13 +29,27 @@ export async function checkBotStatus(tokenOverride) {
   }
 }
 
+// Clean caption and ensure max length
+function trimCaption(caption, maxLen = 1000) {
+  if (!caption) return '';
+  if (caption.length <= maxLen) return caption;
+  return caption.slice(0, maxLen - 15) + '...';
+}
+
+// Strip HTML tags for fallback
+function stripHtml(text) {
+  return (text || '').replace(/<[^>]+>/g, '').trim();
+}
+
 // Send photo with caption, fallback to text if photo fails
 export async function sendTelegramPhoto({ token, chatId, photoUrl, caption, parseMode = 'HTML' }) {
   if (!token || !chatId) {
     return { ok: false, error: 'Telegram credentials missing (token or chatId)' };
   }
 
-  // Support base64 data URI (uploaded from device)
+  const safeCaption = trimCaption(caption);
+
+  // 1. Support base64 data URI (uploaded from device / camera)
   if (photoUrl && photoUrl.startsWith('data:image/')) {
     try {
       const commaIdx = photoUrl.indexOf(',');
@@ -46,42 +60,102 @@ export async function sendTelegramPhoto({ token, chatId, photoUrl, caption, pars
 
       const form = new FormData();
       form.append('chat_id', chatId);
-      form.append('photo', blob, 'receipt.jpg');
-      form.append('caption', caption.slice(0, 1024));
+      form.append('photo', blob, 'image.jpg');
+      form.append('caption', safeCaption);
       form.append('parse_mode', parseMode);
 
-      const res = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
+      let res = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
         method: 'POST',
         body: form
       });
 
-      const data = await res.json();
+      let data = await res.json();
       if (data.ok) {
         return { ok: true, method: 'sendPhotoMultipart', result: data.result };
       }
-      console.warn('sendPhoto multipart failed, falling back:', data.description);
+
+      // If HTML entity parsing failed, retry with plain text caption
+      if (data.description && data.description.includes('can\'t parse entities')) {
+        const retryForm = new FormData();
+        retryForm.append('chat_id', chatId);
+        retryForm.append('photo', blob, 'image.jpg');
+        retryForm.append('caption', stripHtml(safeCaption));
+
+        res = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
+          method: 'POST',
+          body: retryForm
+        });
+        data = await res.json();
+        if (data.ok) {
+          return { ok: true, method: 'sendPhotoMultipartPlainText', result: data.result };
+        }
+      }
+
+      console.warn('sendPhoto multipart failed:', data.description);
     } catch (err) {
       console.warn('sendPhoto multipart network error:', err.message);
     }
   }
 
-  // Support regular HTTP/HTTPS URL
+  // 2. Support regular HTTP/HTTPS URL
   if (photoUrl && (photoUrl.startsWith('http://') || photoUrl.startsWith('https://'))) {
     try {
-      const res = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
+      // First attempt: direct URL to Telegram
+      let res = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: chatId,
           photo: photoUrl,
-          caption: caption.slice(0, 1024),
+          caption: safeCaption,
           parse_mode: parseMode
         })
       });
 
-      const data = await res.json();
+      let data = await res.json();
       if (data.ok) {
-        return { ok: true, method: 'sendPhoto', result: data.result };
+        return { ok: true, method: 'sendPhotoUrl', result: data.result };
+      }
+
+      // If HTML parsing failed, retry with plain text
+      if (data.description && data.description.includes('can\'t parse entities')) {
+        res = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            photo: photoUrl,
+            caption: stripHtml(safeCaption)
+          })
+        });
+        data = await res.json();
+        if (data.ok) {
+          return { ok: true, method: 'sendPhotoUrlPlainText', result: data.result };
+        }
+      }
+
+      // If Telegram couldn't fetch the URL, download image ourselves and send as multipart
+      try {
+        const imgRes = await fetch(photoUrl);
+        if (imgRes.ok) {
+          const arrayBuf = await imgRes.arrayBuffer();
+          const imgBlob = new Blob([arrayBuf], { type: imgRes.headers.get('content-type') || 'image/jpeg' });
+          const form = new FormData();
+          form.append('chat_id', chatId);
+          form.append('photo', imgBlob, 'image.jpg');
+          form.append('caption', stripHtml(safeCaption));
+
+          const multipartRes = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
+            method: 'POST',
+            body: form
+          });
+          const multipartData = await multipartRes.json();
+          if (multipartData.ok) {
+            return { ok: true, method: 'sendPhotoBufferFallback', result: multipartData.result };
+          }
+        }
+      } catch (dlErr) {
+        console.warn('Fallback download of image failed:', dlErr.message);
       }
 
       console.warn('sendPhoto failed, falling back to sendMessage:', data.description);
@@ -90,6 +164,7 @@ export async function sendTelegramPhoto({ token, chatId, photoUrl, caption, pars
     }
   }
 
+  // Final fallback to text message
   return sendTelegramText({ token, chatId, text: caption, parseMode });
 }
 
